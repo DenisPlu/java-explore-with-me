@@ -1,13 +1,12 @@
 package ru.practicum.hit;
 
-import lombok.RequiredArgsConstructor;
 import ru.practicum.HitDto;
 import ru.practicum.HitStringDateDto;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
-public class HitMapper {
+public final class HitMapper {
+    private HitMapper(){};
 
     public static HitDto toHitDto(Hit hit, Long hitsNumber) {
 

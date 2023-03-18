@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Data
 @Builder
@@ -30,17 +29,4 @@ public class Hit {
 
     @Column(name = "created")
     LocalDateTime timestamp;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Hit hit = (Hit) o;
-        return Objects.equals(ip, hit.ip) && uri.equals(hit.uri);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, app, uri);
-    }
 }

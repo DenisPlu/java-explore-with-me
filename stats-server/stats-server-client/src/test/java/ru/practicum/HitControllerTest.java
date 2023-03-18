@@ -2,13 +2,16 @@ package ru.practicum;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.hit.HitServiceImpl;
@@ -25,10 +28,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebAppConfiguration
 @ExtendWith(MockitoExtension.class)
 public class HitControllerTest {
     @Mock
     private HitServiceImpl hitService;
+
     @InjectMocks
     private HitController hitController;
     private final ObjectMapper mapper = JsonMapper.builder()
@@ -72,6 +77,11 @@ public class HitControllerTest {
                 "/events/2",
                 "192.168.0.1"
         );
+    }
+
+    @After("")
+    public void reset_mocks() {
+        Mockito.reset(hitService);
     }
 
     @Test
