@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 @Builder
@@ -22,9 +23,11 @@ public class Compilation {
     Long id;
 
     @NotEmpty(message = "{validation.name.NotEmpty}")
+    @Size(max = 120)
+    @Size(min = 3)
     String title;
 
     boolean pinned;
 
-    Long events;
+    // Long events; - создать отдельную таблицу?
 }
