@@ -9,7 +9,7 @@ public interface RequestService {
 
     List <Request> getByUserAndEventId(Long userId, Long eventId);
 
-    Request update(Long userId, Long requestId);
+    Request cancelRequestByUser(Long userId, Long requestId);
 
     List<Request> updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto);
 }

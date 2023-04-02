@@ -17,25 +17,23 @@ public class EventUpdateDto {
 
     Long id;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     @Size(max = 120)
     @Size(min = 3)
     String title;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     @Size(max = 7000)
     @Size(min = 20)
     String description;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     @Size(max = 2000)
     @Size(min = 20)
     String annotation;
 
     Integer category;
 
-    // дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
-    //Создать кастомный валидатор
     String eventDate;
 
     Location location;

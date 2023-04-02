@@ -12,4 +12,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     @Query(value = "SELECT * FROM participation_request WHERE requester_id = ?1 AND event_id = ?2 ORDER BY id", nativeQuery = true)
     List<Request> getByUserAndEventId (Long userId, Long eventId);
+
+    @Query(value = "SELECT COUNT(*) FROM participation_request WHERE status = 'CONFIRMED' AND event_id = ?1", nativeQuery = true)
+    Integer getAllByEventIdAndConfirmedStatus (Long eventId);
 }

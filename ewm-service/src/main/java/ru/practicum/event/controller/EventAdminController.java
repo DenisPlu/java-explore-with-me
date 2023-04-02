@@ -24,9 +24,9 @@ public class EventAdminController {
 
     @GetMapping
     public List<EventFullDto> searchEventsByAdmin(
-            @RequestParam(defaultValue = "") List<Long> users,
-            @RequestParam(defaultValue = "") List<String> states,
-            @RequestParam(defaultValue = "") List<Integer> categories,
+            @RequestParam(defaultValue = "0") List<Long> users,
+            @RequestParam(defaultValue = "WAITING, PUBLISHED, CANCELED") List<String> states,
+            @RequestParam(defaultValue = "0") List<Integer> categories,
             @RequestParam(defaultValue = "2000-01-01 19:30:35.544") String rangeStart,
             @RequestParam(defaultValue = "2050-01-01 19:30:35.544") String rangeEnd,
             @RequestParam(defaultValue = "10") @Positive Integer size,

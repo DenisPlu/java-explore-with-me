@@ -28,11 +28,4 @@ public class Request {
 
     @Enumerated(EnumType.STRING)
     RequestState status;
-
-    public Request(LocalDateTime created, Long eventId, Long requesterId, RequestState status) {
-        this.created = created;
-        this.event = eventId;
-        this.requester = requesterId;
-        this.status = status;
-    }
 }

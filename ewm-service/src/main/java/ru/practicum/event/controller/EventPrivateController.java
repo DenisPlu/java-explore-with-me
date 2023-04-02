@@ -10,9 +10,7 @@ import ru.practicum.event.dto.EventUpdateDto;
 import ru.practicum.event.service.EventServiceImpl;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventNewDto;
-import ru.practicum.user.UserServiceImpl;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -22,8 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/events")
 public class EventPrivateController {
-
-    // Закрытый API для работы с событиями
 
     private final EventServiceImpl eventService;
 
@@ -55,7 +51,7 @@ public class EventPrivateController {
     public EventFullDto updateByUser(@PathVariable Long userId,
                                @PathVariable Long eventId,
                                @RequestBody EventUpdateDto eventUpdateDto) throws JSONException, JsonProcessingException {
-        log.info("Received a request from user with id {} to update a new event: {}", userId, eventId, eventUpdateDto);
+        log.info("Received a request from User with id {} to update an Event with id: {} EventUpdateDto: {}", userId, eventId, eventUpdateDto);
         return eventService.updateByUser(userId, eventId, eventUpdateDto);
     }
 }

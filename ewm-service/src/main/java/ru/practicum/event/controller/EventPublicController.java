@@ -29,7 +29,7 @@ public class EventPublicController {
             @RequestParam(defaultValue = "empty") String rangeStart,
             @RequestParam(defaultValue = "empty") String rangeEnd,
             @RequestParam(defaultValue = "false") String onlyAvailable,
-            @RequestParam(defaultValue = "") List<Integer> categories,
+            @RequestParam(defaultValue = "0") List<Integer> categories,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "10") @Positive Integer size,
             @RequestParam(defaultValue = "0") @Positive Integer from,

@@ -1,6 +1,5 @@
 package ru.practicum.event.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -20,6 +19,7 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.model.StateAction;
 import ru.practicum.hit.HitDto;
+import ru.practicum.partisipationRequest.RequestRepository;
 import ru.practicum.user.UserMapper;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.UserShortDto;
@@ -43,26 +43,30 @@ public class EventServiceImpl implements EventService{
 
     private final UserRepository userRepository;
 
+    private final RequestRepository requestRepository;
+
     private final StatsClient statsClient;
 
     private final HitsClient hitsClient;
 
     @Override
     public EventFullDto create(Long userId, EventNewDto eventNewDto) {
-        Long locationId = locationRepository.save(eventNewDto.getLocation()).getId();
-        LocationDto locationDto = LocationMapper.toLocationDtoFromLocation(eventNewDto.getLocation());
-        Event event = eventRepository.save(EventMapper.toEventFromEventNewDto(userId, locationId, eventNewDto));
-        Category category = categoryRepository.getReferenceById(event.getCategoryId());
-        UserShortDto userShortDto = UserMapper.toUserShortDtoFromUser(userRepository.getReferenceById(userId));
-
-        return getEventWithViews(event, locationDto, category, userShortDto);
+        if (LocalDateTime.parse(eventNewDto.getEventDate().replaceAll(" ", "T")).isAfter(LocalDateTime.now().plusHours(2))){
+            Long locationId = locationRepository.save(eventNewDto.getLocation()).getId();
+            LocationDto locationDto = LocationMapper.toLocationDtoFromLocation(eventNewDto.getLocation());
+            Event event = eventRepository.save(EventMapper.toEventFromEventNewDto(userId, locationId, eventNewDto));
+            Category category = categoryRepository.getReferenceById(event.getCategoryId());
+            UserShortDto userShortDto = UserMapper.toUserShortDtoFromUser(userRepository.getReferenceById(userId));
+            return getEventWithViews(event, locationDto, category, userShortDto);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Событие не удовлетворяет правилам создания");
+        }
     }
 
     @Override
-    public List<EventFullDto> getByUserId(Long id, Integer size, Integer from) throws JSONException, JsonProcessingException {
+    public List<EventFullDto> getByUserId(Long id, Integer size, Integer from) {
         List<Event> events = eventRepository.getByUserIdWithPagination(id, size, from);
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
-        System.out.println(events);
         for (Event event: events){
             eventFullDtoList.add(toEventFullDtoFromEvent(event));
         }
@@ -70,16 +74,15 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public EventFullDto getByUserAndEventId(Long userId, Long eventId, Integer size, Integer from) throws JSONException, JsonProcessingException {
+    public EventFullDto getByUserAndEventId(Long userId, Long eventId, Integer size, Integer from) {
         Event event = eventRepository.getByUserAndEventId(userId, eventId, size, from);
         return toEventFullDtoFromEvent(event);
     }
 
-    private EventFullDto toEventFullDtoFromEvent(Event event) throws JSONException, JsonProcessingException {
+    private EventFullDto toEventFullDtoFromEvent(Event event) {
         LocationDto locationDto = LocationMapper.toLocationDtoFromLocation(locationRepository.getReferenceById(event.getLocationId()));
         Category category = categoryRepository.getReferenceById(event.getCategoryId());
         UserShortDto userShortDto = UserMapper.toUserShortDtoFromUser(userRepository.getReferenceById(event.getInitiatorId()));
-
         return getEventWithViews(event, locationDto, category, userShortDto);
     }
 
@@ -90,30 +93,36 @@ public class EventServiceImpl implements EventService{
         if (!hitDtos.isEmpty()){
             views = hitDtos.get(0).getHits();
         }
-
-        return EventMapper.toEventFullDtoFromEvent(event, category, locationDto, userShortDto, views);
+        Integer confirmedRequests = requestRepository.getAllByEventIdAndConfirmedStatus(event.getId());
+        return EventMapper.toEventFullDtoFromEvent(event, category, locationDto, userShortDto, views, confirmedRequests);
     }
-
-    //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события ++
-    //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв ++
-    //если в запросе не указан диапазон дат [rangeStart-rangeEnd], то нужно выгружать события, которые произойдут позже текущей даты и времени ++
-    //информация о каждом событии должна включать в себя количество просмотров и количество уже одобренных заявок на участие
-    //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
 
     @Override
     public List<EventFullDto> searchEventsPublic(String text, boolean paid, LocalDateTime startTime, LocalDateTime endTime,
                                             boolean onlyAvailable, List<Integer> categories, String sort,
-                                            Integer size, Integer from, String endpointPath) throws JSONException, JsonProcessingException {
+                                            Integer size, Integer from, String endpointPath) throws JSONException {
         List<Event> events;
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
         if (onlyAvailable){
-            events = eventRepository.searchEventsPublicOnlyAvailable(text, paid, startTime, endTime, categories, sort, size, from);
+            if (categories.get(0) == 0){
+                events = eventRepository.searchEventsPublicOnlyAvailableAllCategories(
+                        text, paid, startTime, endTime, sort, size, from);
+            } else {
+                events = eventRepository.searchEventsPublicOnlyAvailable(
+                        text, paid, startTime, endTime, categories, sort, size, from);
+            }
             for(Event event: events){
                 eventFullDtoList.add(toEventFullDtoFromEvent(event));
                 hitsClient.createHit("ewm-main-service", endpointPath);
             }
         } else {
-            events = eventRepository.searchEventsPublic(text, paid, startTime, endTime, categories, sort.toLowerCase(), size, from);
+            if (categories.get(0) == 0){
+                events = eventRepository.searchEventsPublicAllCategories(
+                        text, paid, startTime, endTime, sort.toLowerCase(), size, from);
+            } else {
+                events = eventRepository.searchEventsPublic(
+                        text, paid, startTime, endTime, categories, sort.toLowerCase(), size, from);
+            }
             for(Event event: events){
                 eventFullDtoList.add(toEventFullDtoFromEvent(event));
                 hitsClient.createHit("ewm-main-service", endpointPath);
@@ -129,27 +138,24 @@ public class EventServiceImpl implements EventService{
             Event event = eventRepository.getByIdIfPublished(id);
             hitsClient.createHit("ewm-main-service", endpointPath);
             return toEventFullDtoFromEvent(event);
-
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event с запрошенным id не существует");
         }
     }
 
     @Override
-    public EventFullDto updateByUser(Long userId, Long eventId, EventUpdateDto eventUpdateDto) throws JSONException, JsonProcessingException {
+    public EventFullDto updateByUser(Long userId, Long eventId, EventUpdateDto eventUpdateDto) {
         Event event = eventRepository.getReferenceById(eventId);
         LocalDateTime startTime = event.getEventDate();
-        //System.out.println(event.isRequestModeration());
-        //System.out.println(startTime.isAfter(LocalDateTime.now().plusHours(2)));
-        //System.out.println(event.getInitiatorId().equals(userId));
-        if (startTime.isAfter(LocalDateTime.now().plusHours(2)) && event.isRequestModeration() && event.getInitiatorId().equals(userId)){
+        if (startTime.isAfter(LocalDateTime.now().plusHours(2)) && !event.getState().equals(EventState.PUBLISHED)
+                && event.getInitiatorId().equals(userId)){
             checkAndUpdateEvent(eventUpdateDto, event);
             if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()){
                 if (eventUpdateDto.getStateAction().equals(StateAction.SEND_TO_REVIEW)){
-                    event.setState(EventState.WAITING);
+                    event.setState(EventState.PENDING);
                 }
                 if (eventUpdateDto.getStateAction().equals(StateAction.CANCEL_REVIEW)){
-                    event.setState(EventState.PUBLISHED);
+                    event.setState(EventState.CANCELED);
                 }
             }
             return toEventFullDtoFromEvent(eventRepository.save(event));
@@ -193,10 +199,26 @@ public class EventServiceImpl implements EventService{
     @Override
     public List<EventFullDto> searchEventsByAdmin(List<Long> usersId, List<String> states, List<Integer> categories,
                                                   LocalDateTime startTime, LocalDateTime endTime,
-                                                  Integer size, Integer from) throws JSONException, JsonProcessingException {
+                                                  Integer size, Integer from) {
         List<Event> events;
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
-        events = eventRepository.searchEventsByAdmin(usersId, states, categories, startTime, endTime, size, from);
+        if (usersId.get(0) == 0){
+            if (categories.get(0) ==0){
+                events = eventRepository.searchEventsByAdminFromAllUsersAndCategories(
+                        states, startTime, endTime, size, from);
+            } else {
+                events = eventRepository.searchEventsByAdminFromAllUsers(
+                        states, categories, startTime, endTime, size, from);
+            }
+        } else {
+            if (categories.get(0) ==0){
+                events = eventRepository.searchEventsByAdminFromAllCategories(
+                        usersId, states, startTime, endTime, size, from);
+            } else {
+                events = eventRepository.searchEventsByAdmin(
+                        usersId, states, categories, startTime, endTime, size, from);
+            }
+        }
         for(Event event: events){
             eventFullDtoList.add(toEventFullDtoFromEvent(event));
         }
@@ -204,14 +226,15 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public EventFullDto updateByAdmin(Long eventId, EventUpdateDto eventUpdateDto) throws JSONException, JsonProcessingException {
+    public EventFullDto updateByAdmin(Long eventId, EventUpdateDto eventUpdateDto) {
         Event event = eventRepository.getReferenceById(eventId);
         LocalDateTime startTime = event.getEventDate();
-        if (startTime.isBefore(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.WAITING)){
+        if (startTime.isAfter(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.PENDING)){
             checkAndUpdateEvent(eventUpdateDto, event);
             if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()){
                 if (eventUpdateDto.getStateAction().equals(StateAction.PUBLISH_EVENT)){
                     event.setState(EventState.PUBLISHED);
+                    event.setPublishedOn(LocalDateTime.now());
                 }
                 if (eventUpdateDto.getStateAction().equals(StateAction.REJECT_EVENT)){
                     event.setState(EventState.CANCELED);

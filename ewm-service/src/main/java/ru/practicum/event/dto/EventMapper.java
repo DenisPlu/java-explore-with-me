@@ -1,20 +1,9 @@
 package ru.practicum.event.dto;
 
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import ru.practicum.category.Category;
-import ru.practicum.category.CategoryRepository;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.EventNewDto;
-import ru.practicum.event.location.Location;
 import ru.practicum.event.location.LocationDto;
-import ru.practicum.event.location.LocationRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
-import ru.practicum.event.service.EventRepository;
-import ru.practicum.user.UserRepository;
 import ru.practicum.user.UserShortDto;
 
 import java.time.LocalDateTime;
@@ -29,7 +18,7 @@ public class EventMapper {
                 eventNewDto.getTitle(),
                 eventNewDto.getDescription(),
                 eventNewDto.getAnnotation(),
-                EventState.valueOf("WAITING"),
+                EventState.valueOf("PENDING"),
                 eventNewDto.getCategory(),
                 LocalDateTime.now(),
                 LocalDateTime.parse(eventNewDto.getEventDate().replaceAll(" ", "T")),
@@ -44,7 +33,7 @@ public class EventMapper {
     }
 
     public static EventFullDto toEventFullDtoFromEvent(
-            Event event, Category category, LocationDto locationDto, UserShortDto userShortDto, Integer views) {
+            Event event, Category category, LocationDto locationDto, UserShortDto userShortDto, Integer views, Integer confirmedRequests) {
         return new EventFullDto(
                 event.getId(),
                 event.getTitle(),
@@ -55,7 +44,7 @@ public class EventMapper {
                 event.getCreatedOn(),
                 event.getEventDate().toString().replaceAll("T", " "),
                 event.getPublishedOn(),
-                event.getConfirmedRequests(),
+                confirmedRequests,
                 locationDto,
                 userShortDto,
                 event.isPaid(),

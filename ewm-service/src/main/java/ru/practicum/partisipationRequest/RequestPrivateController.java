@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.user.UserServiceImpl;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class RequestPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Request create(@PathVariable @Positive Long userId, @RequestParam @Positive Long eventId) {
-        log.info("Received a request from user with id {} to participate in Event with id {}", userId, eventId);
+        log.info("Received a request from User with id {} to participate in Event with id {}", userId, eventId);
         return requestService.create(userId, eventId);
     }
 
@@ -31,11 +29,9 @@ public class RequestPrivateController {
         return requestService.get(userId);
     }
 
-    // дописать обновление - отмену
-
     @PatchMapping("/{requestId}/cancel")
-    public Request update(@PathVariable Long userId, @PathVariable Long requestId) {
+    public Request cancelRequestByUser(@PathVariable Long userId, @PathVariable Long requestId) {
         log.info("Received a request to cancel a request with id: {}, user: {}", userId, requestId);
-        return requestService.update(userId, requestId);
+        return requestService.cancelRequestByUser(userId, requestId);
     }
 }

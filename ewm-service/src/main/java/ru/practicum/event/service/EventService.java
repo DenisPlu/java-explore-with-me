@@ -5,7 +5,6 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventNewDto;
 import ru.practicum.event.dto.EventUpdateDto;
-import ru.practicum.event.model.EventState;
 
 import java.time.LocalDateTime;
 import java.util.List;
