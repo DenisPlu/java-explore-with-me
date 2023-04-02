@@ -45,8 +45,6 @@ public class EventServiceImpl implements EventService{
 
     private final StatsClient statsClient;
 
-    private final HitClient hitClient;
-
     private final HitsClient hitsClient;
 
     @Override
@@ -95,6 +93,12 @@ public class EventServiceImpl implements EventService{
 
         return EventMapper.toEventFullDtoFromEvent(event, category, locationDto, userShortDto, views);
     }
+
+    //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события ++
+    //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв ++
+    //если в запросе не указан диапазон дат [rangeStart-rangeEnd], то нужно выгружать события, которые произойдут позже текущей даты и времени ++
+    //информация о каждом событии должна включать в себя количество просмотров и количество уже одобренных заявок на участие
+    //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
 
     @Override
     public List<EventFullDto> searchEventsPublic(String text, boolean paid, LocalDateTime startTime, LocalDateTime endTime,
@@ -203,7 +207,7 @@ public class EventServiceImpl implements EventService{
     public EventFullDto updateByAdmin(Long eventId, EventUpdateDto eventUpdateDto) throws JSONException, JsonProcessingException {
         Event event = eventRepository.getReferenceById(eventId);
         LocalDateTime startTime = event.getEventDate();
-        if (startTime.isAfter(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.WAITING)){
+        if (startTime.isBefore(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.WAITING)){
             checkAndUpdateEvent(eventUpdateDto, event);
             if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()){
                 if (eventUpdateDto.getStateAction().equals(StateAction.PUBLISH_EVENT)){
@@ -215,7 +219,8 @@ public class EventServiceImpl implements EventService{
             }
             return toEventFullDtoFromEvent(eventRepository.save(event));
         } else {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Событие должно быть в состоянии ожидания");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Событие должно быть в состоянии ожидания " +
+                    "и дата начала изменяемого события должна быть не ранее чем за час от даты публикации ");
         }
     }
 }

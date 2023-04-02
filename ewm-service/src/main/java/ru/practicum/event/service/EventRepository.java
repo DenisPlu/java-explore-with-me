@@ -2,10 +2,8 @@ package ru.practicum.event.service;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.practicum.category.Category;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.EventState;
-import ru.practicum.user.User;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +16,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = "SELECT * FROM events WHERE (UPPER(annotation) LIKE UPPER(CONCAT('%', ?1, '%')) " +
             "OR UPPER(description) LIKE UPPER(CONCAT('%', ?1, '%'))) " +
             "AND paid = ?2 AND event_date >= ?3 AND  event_date <= ?4 " +
-            "AND category_id IN (?5) " +
+            "AND category_id IN (?5) AND state = 'PUBLISHED' " +
             "ORDER BY ?6 DESC LIMIT ?7 OFFSET ?8", nativeQuery = true)
     List<Event> searchEventsPublic(String text, boolean paid, LocalDateTime startTime, LocalDateTime endTime,
                                                    List<Integer> categories, String sort,
@@ -48,4 +46,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "SELECT * FROM events WHERE initiator_id = ?1 AND id = ?2 ORDER BY id DESC LIMIT ?3 OFFSET ?4", nativeQuery = true)
     Event getByUserAndEventId(Long userId, Long eventId, Integer size, Integer from);
+
+    List<Event> findAllByCategoryId(Integer id);
 }

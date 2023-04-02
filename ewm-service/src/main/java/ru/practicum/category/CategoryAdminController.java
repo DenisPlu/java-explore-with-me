@@ -18,7 +18,7 @@ public class CategoryAdminController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Category create(@RequestBody @Valid Category category) {
-        log.info("Received a request to create a new category: {}", category);
+        log.info("Received a request to create a new Category: {}", category);
         System.out.println(category);
         return categoryService.create(category);
     }

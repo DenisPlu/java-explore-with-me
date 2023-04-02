@@ -2,12 +2,13 @@ package ru.practicum.category;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.event.service.EventRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Getter
@@ -16,9 +17,15 @@ public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
 
+    private final EventRepository eventRepository;
+
     @Override
     public Category create(Category category) {
-        return categoryRepository.save(category);
+        try {
+            return categoryRepository.save(category);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Уже есть категория с данным именем");
+        }
     }
 
     @Override
@@ -39,28 +46,21 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Category update(Integer id, Category category) {
-        System.out.println(category);
-
-        Category curCategory = categoryRepository.getReferenceById(id);
-        System.out.println(curCategory);
-
-        if (!curCategory.getName().equals(category.getName())){
-            if (Optional.ofNullable(category.getName()).isPresent()) {
-                curCategory.setName(category.getName());
-            }
+        try {
+            Category curCategory = categoryRepository.getReferenceById(id);
+            curCategory.setName(category.getName());
             return categoryRepository.save(curCategory);
-        } else {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "У Категории уже установлено данное имя");
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Уже есть категория с данным именем");
         }
     }
 
     @Override
     public void delete(Integer id) {
-        try {
-            categoryRepository.getReferenceById(id).getName();
+        if (eventRepository.findAllByCategoryId(id).isEmpty()){
             categoryRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category с запрошенным id не существует");
+        } else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category с запрошенным id не существует или есть связанные ивенты");
         }
     }
 }

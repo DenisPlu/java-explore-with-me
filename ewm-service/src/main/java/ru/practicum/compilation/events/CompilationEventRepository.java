@@ -12,6 +12,6 @@ public interface CompilationEventRepository extends JpaRepository<CompilationEve
     @Query(value = "DELETE FROM compilations_events WHERE compilation_id = ?1", nativeQuery = true)
     void deleteByCompilationId(Long id);
 
-    @Query(value = "SELECT * FROM compilations_events WHERE compilation_id = ?1", nativeQuery = true)
-    List<Long> getByCompId(Long id);
+    @Query(value = "SELECT event_id FROM compilations_events WHERE compilation_id = ?1", nativeQuery = true)
+    List<Long> findAllByCompilationId(Long id);
 }

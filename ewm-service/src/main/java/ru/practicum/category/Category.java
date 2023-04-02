@@ -3,7 +3,6 @@ package ru.practicum.category;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -23,7 +22,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     @Size(max = 120)
     @Size(min = 3)
     String name;

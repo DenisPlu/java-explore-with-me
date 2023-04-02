@@ -14,12 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/users")
 public class UserAdminController {
+
     private final UserServiceImpl userService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User create(@RequestBody @Valid User user) {
-        log.info("Received a request to create a new user: {}", user);
+        log.info("Received a request to create a new User: {}", user);
         return userService.create(user);
     }
 
@@ -28,20 +29,20 @@ public class UserAdminController {
                                @RequestParam(defaultValue = "10") @Positive Integer size,
                                @RequestParam(defaultValue = "0") @Positive Integer from) {
         System.out.println("ids = " + ids);
-        log.info("Received a request to get users {} size {} from {} ", ids, size, from);
+        log.info("Received a request to get Users {} size {} from {} ", ids, size, from);
         return userService.getByIds(ids, size, from);
     }
 
     @PatchMapping("/{id}")
     public User update(@PathVariable Long id, @RequestBody User user) {
-        log.info("Received a request to update a user with id: {}, user: {}", id, user);
+        log.info("Received a request to update a User with id: {}, user: {}", id, user);
         return userService.update(id, user);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        log.info("Received a request to delete a user with id: {}", id);
+        log.info("Received a request to delete a User with id: {}", id);
         userService.delete(id);
     }
 }

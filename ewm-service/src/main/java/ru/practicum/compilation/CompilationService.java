@@ -1,6 +1,5 @@
 package ru.practicum.compilation;
 
-import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.CompilationFullDto;
 import ru.practicum.compilation.model.CompilationNewDto;
 

@@ -13,10 +13,8 @@ import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.CompilationFullDto;
 import ru.practicum.compilation.model.CompilationMapper;
 import ru.practicum.compilation.model.CompilationNewDto;
-import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.EventMapper;
-import ru.practicum.event.location.LocationDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.service.EventRepository;
 import ru.practicum.event.service.StatsClient;
@@ -71,7 +69,7 @@ public class CompilationServiceImpl implements CompilationService{
     public List<CompilationFullDto> getAllWithPagination(String pinned, Integer size, Integer from) {
         List<CompilationFullDto> compilationFullDtoList = new ArrayList<>();
         for (Compilation compilation: compilationRepository.getAllWithPagination(pinned, size, from)){
-            List<Long> eventsIds = compilationEventRepository.getByCompId(compilation.getId());
+            List<Long> eventsIds = compilationEventRepository.findAllByCompilationId(compilation.getId());
             List<EventShortDto> eventShortDtoList = getEventShortDtoList(eventsIds);
             CompilationFullDto compilationFullDto = CompilationMapper.toCompilationFullDtoFromCompilation(
                     compilation, eventShortDtoList);
@@ -105,7 +103,7 @@ public class CompilationServiceImpl implements CompilationService{
     public CompilationFullDto get(Long id) {
         try {
             compilationRepository.getReferenceById(id).getTitle();
-            List<Long> eventsIds = compilationEventRepository.getByCompId(id);
+            List<Long> eventsIds = compilationEventRepository.findAllByCompilationId(id);
             List<EventShortDto> eventShortDtoList = getEventShortDtoList(eventsIds);
             CompilationFullDto compilationFullDto = CompilationMapper.toCompilationFullDtoFromCompilation(
                     compilationRepository.getReferenceById(id), eventShortDtoList);
@@ -132,7 +130,7 @@ public class CompilationServiceImpl implements CompilationService{
     public void delete(Long id) {
         try {
             compilationRepository.getReferenceById(id).getTitle();
-            if (!compilationEventRepository.getByCompId(id).isEmpty()){
+            if (!compilationEventRepository.findAllByCompilationId(id).isEmpty()){
                 compilationEventRepository.deleteByCompilationId(id);
             }
             compilationRepository.deleteById(id);

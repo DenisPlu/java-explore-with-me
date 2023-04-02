@@ -1,11 +1,6 @@
 package ru.practicum.user;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-
 
 public interface UserService {
 

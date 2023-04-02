@@ -15,21 +15,15 @@ public class UserPrivateController {
 
     private final UserServiceImpl userService;
 
-
-
-
-
-
-
     @PostMapping
     public User create(@RequestBody @Valid User user) {
-        log.info("Received a request to create a new user: {}", user);
+        log.info("Received a request to create a new User: {}", user);
         return userService.create(user);
     }
 
     @GetMapping
     public List<User> getAll(List<Long> ids, Integer from, Integer size) {
-        log.info("Received a request to get all users");
+        log.info("Received a request to get all Users");
         return userService.getByIds(ids, size, from);
     }
 
@@ -41,7 +35,7 @@ public class UserPrivateController {
 
     @PatchMapping("/{id}")
     public User update(@PathVariable Long id, @RequestBody User user) {
-        log.info("Received a request to update a user with id: {}, user: {}", id, user);
+        log.info("Received a request to update a user with id: {}, User: {}", id, user);
         return userService.update(id, user);
     }
 

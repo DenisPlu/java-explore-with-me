@@ -15,17 +15,17 @@ import javax.validation.constraints.NotEmpty;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})     // убрать???
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     String name;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     @Email
     String email;
 }

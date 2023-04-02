@@ -13,6 +13,7 @@ import java.util.Optional;
 @Getter
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
+
     private final UserRepository userRepository;
 
     @Override
@@ -22,7 +23,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<User> getByIds(List<Long> ids, Integer from, Integer size) {
-
         return userRepository.getByIds(ids, from, size);
     }
 

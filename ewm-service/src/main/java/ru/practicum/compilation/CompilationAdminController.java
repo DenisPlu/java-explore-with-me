@@ -20,13 +20,13 @@ public class CompilationAdminController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CompilationFullDto create(@RequestBody @Valid CompilationNewDto compilationNewDto) {
-        log.info("Received a request to create a new compilation: {}", compilationNewDto);
+        log.info("Received a request to create a new CompilationNewDto: {}", compilationNewDto);
         return compilationService.create(compilationNewDto);
     }
 
     @PatchMapping("/{id}")
     public CompilationFullDto update(@PathVariable Long id, @RequestBody CompilationNewDto compilationNewDto) {
-        log.info("Received a request to update a compilation with id: {}, compilation: {}", id, compilationNewDto);
+        log.info("Received a request to update a compilation with id: {}, CompilationNewDto: {}", id, compilationNewDto);
         return compilationService.update(id, compilationNewDto);
     }
 
