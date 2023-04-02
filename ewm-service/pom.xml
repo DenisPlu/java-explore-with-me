@@ -11,6 +11,8 @@
 
     <artifactId>ewm-service</artifactId>
 
+    <name>ewm-service</name>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>

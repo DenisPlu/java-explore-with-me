@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>stats-server</artifactId>
+
+    <name>stats-server</name>
+
     <packaging>pom</packaging>
     <modules>
         <module>stats-server-service</module>
