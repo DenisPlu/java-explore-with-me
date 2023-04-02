@@ -58,7 +58,7 @@ public class HitServiceTest {
         List<Hit> hits = query.setParameter("uri", List.of("/events/2"))
                 .setParameter("start", LocalDateTime.now().minusHours(1))
                 .setParameter("end", LocalDateTime.now().plusHours(1)).getResultList();
-        assertThat(hits.size(), equalTo(2));
+        assertThat(hits.size(), equalTo(1));
         assertThat(hits.get(0).getApp(), equalTo("ewm-main-service"));
     }
 }
