@@ -1,12 +1,9 @@
-package ru.practicum.compilation;
+package ru.practicum.compilation.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -16,18 +13,17 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "compilations")
 public class Compilation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotEmpty(message = "{validation.name.NotEmpty}")
+    @NotEmpty
     @Size(max = 120)
     @Size(min = 3)
     String title;
 
-    boolean pinned;
-
-    // Long events; - создать отдельную таблицу?
+    String pinned;
 }

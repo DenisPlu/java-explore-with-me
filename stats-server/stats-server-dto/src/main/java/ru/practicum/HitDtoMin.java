@@ -8,12 +8,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HitStringDateDto {
+public class HitDtoMin {
     Long id;
 
     String app;
 
     String uri;
-
-    String ip;
 }

@@ -33,28 +33,12 @@ public class HitServiceTest {
 
     private final EntityManager em;
     private final HitServiceImpl hitService;
-    HitStringDateDto hitStringDateDto1;
-    HitStringDateDto hitStringDateDto2;
 
     @BeforeEach
     @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
     void setUp() {
-
-        hitStringDateDto1 = new HitStringDateDto(
-                1L,
-                "ewm-main-service",
-                "/events/2",
-                "192.168.0.1"
-        );
-        hitStringDateDto2 = new HitStringDateDto(
-                2L,
-                "ewm-main-service",
-                "/events/2",
-                "192.168.0.1"
-        );
-
-        hitService.create(hitStringDateDto1);
-        hitService.create(hitStringDateDto2);
+        hitService.create(new Hit(null, "ewm-main-service", "/events/1", "192.168.0.1", LocalDateTime.now()));
+        hitService.create(new Hit(null, "ewm-main-service", "/events/2", "192.168.0.1", LocalDateTime.now()));
     }
 
     @Test
@@ -71,7 +55,7 @@ public class HitServiceTest {
     void findHitsByUriAndTimeDiapason() {
         TypedQuery<Hit> query = em.createQuery(
                 "SELECT h FROM Hit h WHERE h.uri = :uri AND h.timestamp >= :start AND h.timestamp <= :end" , Hit.class);
-        List<Hit> hits = query.setParameter("uri", "/events/2")
+        List<Hit> hits = query.setParameter("uri", List.of("/events/2"))
                 .setParameter("start", LocalDateTime.now().minusHours(1))
                 .setParameter("end", LocalDateTime.now().plusHours(1)).getResultList();
         assertThat(hits.size(), equalTo(2));

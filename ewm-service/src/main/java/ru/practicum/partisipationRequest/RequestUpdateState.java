@@ -1,7 +1,6 @@
 package ru.practicum.partisipationRequest;
 
-public enum RequestState {
-    PENDING,
+public enum RequestUpdateState {
     CONFIRMED,
-    CANCELED
+    REJECTED
 }

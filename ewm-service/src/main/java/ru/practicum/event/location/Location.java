@@ -1,4 +1,4 @@
-package ru.practicum.event.model;
+package ru.practicum.event.location;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Data
 @Builder

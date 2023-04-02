@@ -1,0 +1,15 @@
+package ru.practicum.partisipationRequest;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface RequestRepository extends JpaRepository<Request, Long> {
+
+    @Query(value = "SELECT * FROM participation_request WHERE requester_id = ?1 ORDER BY id", nativeQuery = true)
+    List<Request> getAllByUserId (Long userId);
+
+    @Query(value = "SELECT * FROM participation_request WHERE requester_id = ?1 AND event_id = ?2 ORDER BY id", nativeQuery = true)
+    List<Request> getByUserAndEventId (Long userId, Long eventId);
+}

@@ -2,13 +2,9 @@ package ru.practicum.hit;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.HitDto;
-import ru.practicum.HitStringDateDto;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,13 +20,10 @@ public class HitServiceImpl implements HitService{
     private final HitRepository hitRepository;
 
     @Override
-    public String create(HitStringDateDto hitDto) {
-        try {
-            hitRepository.save(HitMapper.toHitFromHitStringDateDto(hitDto));
+    public String create(Hit hit) {
+
+        System.out.println(hitRepository.save(hit));
             return "Информация сохранена";
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Не корректно задан hit");
-        }
     }
 
     @Override
@@ -39,6 +32,7 @@ public class HitServiceImpl implements HitService{
         if (uris.get(0).equals("all")){
             baseHitList = hitRepository.findHitsByTimeDiapason(start, end);
         }else {
+            System.out.println(uris);
             baseHitList = hitRepository.findHitsByUriAndTimeDiapason(uris, start, end);
         }
         if (Boolean.parseBoolean(unique)){

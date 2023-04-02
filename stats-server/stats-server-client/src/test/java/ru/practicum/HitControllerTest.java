@@ -45,7 +45,7 @@ public class HitControllerTest {
 
     private HitDto hitDto3;
 
-    private HitStringDateDto hitStringDateDto;
+    private HitDtoMin hitDtoMin;
 
     @BeforeEach
     void setUp() {
@@ -71,11 +71,10 @@ public class HitControllerTest {
                 3L
         );
 
-        hitStringDateDto = new HitStringDateDto(
+        hitDtoMin = new HitDtoMin(
                 3L,
                 "ewm-main-service",
-                "/events/2",
-                "192.168.0.1"
+                "/events/2"
         );
     }
 
@@ -89,7 +88,7 @@ public class HitControllerTest {
         when(hitService.create(any()))
                 .thenReturn("Информация сохранена");
         mvc.perform(post("/hit")
-                        .content(mapper.writeValueAsString(hitStringDateDto))
+                        .content(mapper.writeValueAsString(hitDtoMin))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

@@ -3,7 +3,6 @@ package ru.practicum.partisipationRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,18 +10,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-public class ParticipationRequest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RequestDto {
+
     Long id;
 
     LocalDateTime created;
 
-    Long event;
+    Long eventId;
 
-    Long requester;
+    Long requesterId;
 
-    @Enumerated(EnumType.STRING)
     RequestState status;
 }

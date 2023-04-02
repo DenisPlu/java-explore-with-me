@@ -1,11 +1,13 @@
 package ru.practicum.event.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "events")
 public class Event {
 
     @Id
@@ -39,21 +42,28 @@ public class Event {
     @Enumerated(EnumType.STRING)
     EventState state;
 
-    Integer category;
+    Integer categoryId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", shape = JsonFormat.Shape.STRING)
     LocalDateTime createdOn;
 
     // дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
     //Создать кастомный валидатор
-    @Future(message = "{validation.birthDate.Future}")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", shape = JsonFormat.Shape.STRING)
     LocalDateTime eventDate;
 
+    //@Column(name = "publishedOn")
+    //@DateTimeFormat(iso = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+    //@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", shape = JsonFormat.Shape.STRING)
     @Future(message = "{validation.birthDate.Future}")
     LocalDateTime publishedOn;
 
-    Long location;
+    Integer confirmedRequests;
 
-    Long initiator;
+    Long locationId;
+
+    Long initiatorId;
 
     boolean paid;
 
