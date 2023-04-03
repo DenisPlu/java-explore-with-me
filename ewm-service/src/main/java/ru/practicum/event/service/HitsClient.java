@@ -5,10 +5,10 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Component
 public class HitsClient {
 
     private static final String API_path = "http://localhost:9090" + "/hit";

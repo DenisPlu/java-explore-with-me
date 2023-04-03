@@ -1,13 +1,13 @@
 package ru.practicum.event.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.hit.HitDto;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Service
+@Component
 public class StatsClient {
 
     private static final String API_path = "http://localhost:9090" + "/stats" + "?uris=";
