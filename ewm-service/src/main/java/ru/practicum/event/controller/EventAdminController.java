@@ -1,9 +1,7 @@
 package ru.practicum.event.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventUpdateDto;
@@ -30,7 +28,7 @@ public class EventAdminController {
             @RequestParam(defaultValue = "2000-01-01 19:30:35.544") String rangeStart,
             @RequestParam(defaultValue = "2050-01-01 19:30:35.544") String rangeEnd,
             @RequestParam(defaultValue = "10") @Positive Integer size,
-            @RequestParam(defaultValue = "0") @Positive Integer from) throws JSONException, JsonProcessingException {
+            @RequestParam(defaultValue = "0") @Positive Integer from) {
         log.info("Received a request from Admin to get Events size {} from {} ", size, from);
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startTime = LocalDateTime.parse(rangeStart.replaceAll(" ", "T"), formatter);
@@ -40,7 +38,7 @@ public class EventAdminController {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateByAdmin(@PathVariable Long eventId,
-                                      @RequestBody EventUpdateDto eventUpdateDto) throws JSONException, JsonProcessingException {
+                                      @RequestBody EventUpdateDto eventUpdateDto) {
         log.info("Received a request from Admin to update Event with id {} eventUpdateDto:{} ", eventId, eventUpdateDto);
         return eventService.updateByAdmin(eventId, eventUpdateDto);
     }

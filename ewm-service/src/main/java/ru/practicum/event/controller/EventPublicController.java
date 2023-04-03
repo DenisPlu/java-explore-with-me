@@ -33,7 +33,7 @@ public class EventPublicController {
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "10") @Positive Integer size,
             @RequestParam(defaultValue = "0") @Positive Integer from,
-            HttpServletRequest request) throws JSONException, JsonProcessingException {
+            HttpServletRequest request) throws JSONException {
         log.info("Received a request to search Events by ... size {} from {} ", size, from);
         String endpointPath = request.getRequestURI();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
