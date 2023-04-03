@@ -1,10 +1,9 @@
-version: '3.1'
+version: '3.8'
 services:
   stats-server:
     build: stats-server/stats-server-client
     image: stats-server
     container_name: stats-server
-    restart: always
     ports:
       - "9090:9090"
     depends_on:
@@ -24,12 +23,13 @@ services:
       - POSTGRES_DB=ewm_stats_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=denden
+    volumes:
+      - /var/lib/PostgresSQL/data/
 
   ewm-service:
     build: ewm-service/
     image: ewm-service
     container_name: ewm-service
-    restart: always
     ports:
       - "8080:8080"
     depends_on:
@@ -50,3 +50,5 @@ services:
       - POSTGRES_DB=ewm_main_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=denden
+    volumes:
+      - /var/lib/PostgresSQL/data/
