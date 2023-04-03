@@ -33,7 +33,7 @@ public class EventPrivateController {
     @GetMapping
     public List<EventFullDto> getByUserId(@PathVariable Long userId,
                                           @RequestParam(defaultValue = "10") @Positive Integer size,
-                                          @RequestParam(defaultValue = "0") @Positive Integer from) throws JSONException, JsonProcessingException {
+                                          @RequestParam(defaultValue = "0") @Positive Integer from) {
         log.info("Received a request to get Events of User with id {} size {} from {}", userId, size, from);
         return eventService.getByUserId(userId, size, from);
     }
@@ -42,7 +42,7 @@ public class EventPrivateController {
     public EventFullDto getByUserAndEventId(@PathVariable Long userId,
                                             @PathVariable Long eventId,
                                             @RequestParam(defaultValue = "10") @Positive Integer size,
-                                            @RequestParam(defaultValue = "0") @Positive Integer from) throws JSONException, JsonProcessingException {
+                                            @RequestParam(defaultValue = "0") @Positive Integer from) {
         log.info("Received a request to get Event id {} of User with id {} size {} from {}", eventId, userId, size, from);
         return eventService.getByUserAndEventId(userId, eventId, size, from);
     }
@@ -50,7 +50,7 @@ public class EventPrivateController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateByUser(@PathVariable Long userId,
                                @PathVariable Long eventId,
-                               @RequestBody EventUpdateDto eventUpdateDto) throws JSONException, JsonProcessingException {
+                               @RequestBody EventUpdateDto eventUpdateDto) {
         log.info("Received a request from User with id {} to update an Event with id: {} EventUpdateDto: {}", userId, eventId, eventUpdateDto);
         return eventService.updateByUser(userId, eventId, eventUpdateDto);
     }
