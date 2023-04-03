@@ -36,7 +36,7 @@ services:
       - ewm-main-db
       - stats-server
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm_main_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm_main_db:5432/ewm_main_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=denden
 
