@@ -54,7 +54,7 @@ public class HitServiceTest {
     @DirtiesContext
     void findHitsByUriAndTimeDiapason() {
         TypedQuery<Hit> query = em.createQuery(
-                "SELECT h FROM Hit h WHERE h.uri = :uri AND h.timestamp >= :start AND h.timestamp <= :end" , Hit.class);
+                "SELECT h FROM Hit h WHERE h.uri = :uri AND h.timestamp >= :start AND h.timestamp <= :end", Hit.class);
         List<Hit> hits = query.setParameter("uri", List.of("/events/2"))
                 .setParameter("start", LocalDateTime.now().minusHours(1))
                 .setParameter("end", LocalDateTime.now().plusHours(1)).getResultList();

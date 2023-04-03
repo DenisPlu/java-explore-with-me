@@ -30,7 +30,7 @@ import java.util.Optional;
 @Service
 @Getter
 @RequiredArgsConstructor
-public class CompilationServiceImpl implements CompilationService{
+public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
 
@@ -40,7 +40,7 @@ public class CompilationServiceImpl implements CompilationService{
 
     private final CategoryRepository categoryRepository;
 
-    private  final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private final StatsClient statsClient;
 
@@ -54,7 +54,7 @@ public class CompilationServiceImpl implements CompilationService{
         List<EventShortDto> events = new ArrayList<>();
         System.out.println(compilation);
         Compilation savedCompilation = compilationRepository.save(compilation);
-        for (Long eventId: compilationNewDto.getEvents()){
+        for (Long eventId : compilationNewDto.getEvents()) {
             Event event = eventRepository.getReferenceById(eventId);
             getEventShortDto(events, event);
             compilationEventRepository.save(new CompilationEvent(
@@ -68,7 +68,7 @@ public class CompilationServiceImpl implements CompilationService{
     @Override
     public List<CompilationFullDto> getAllWithPagination(String pinned, Integer size, Integer from) {
         List<CompilationFullDto> compilationFullDtoList = new ArrayList<>();
-        for (Compilation compilation: compilationRepository.getAllWithPagination(pinned, size, from)){
+        for (Compilation compilation : compilationRepository.getAllWithPagination(pinned, size, from)) {
             List<Long> eventsIds = compilationEventRepository.findAllByCompilationId(compilation.getId());
             List<EventShortDto> eventShortDtoList = getEventShortDtoList(eventsIds);
             CompilationFullDto compilationFullDto = CompilationMapper.toCompilationFullDtoFromCompilation(
@@ -81,7 +81,7 @@ public class CompilationServiceImpl implements CompilationService{
     private List<EventShortDto> getEventShortDtoList(List<Long> eventsIds) {
         List<EventShortDto> eventShortDtoList = new ArrayList<>();
         List<Event> events = eventRepository.getByEventsIds(eventsIds);
-        for (Event event: events){
+        for (Event event : events) {
             getEventShortDto(eventShortDtoList, event);
         }
         return eventShortDtoList;
@@ -93,7 +93,7 @@ public class CompilationServiceImpl implements CompilationService{
         String uriEvent = "/events/" + event.getId().toString();
         List<HitDto> hitDtos = statsClient.getStats(uriEvent);
         Integer views = 0;
-        if (!hitDtos.isEmpty()){
+        if (!hitDtos.isEmpty()) {
             views = hitDtos.get(0).getHits();
         }
         eventShortDtoList.add(EventMapper.toEventShortDtoFromEvent(event, category, userShortDto, views));
@@ -117,10 +117,10 @@ public class CompilationServiceImpl implements CompilationService{
     @Override
     public CompilationFullDto update(Long id, CompilationNewDto compilationNewDto) {
         Compilation compilation = compilationRepository.getReferenceById(id);
-        if (Optional.ofNullable(compilationNewDto.getTitle()).isPresent()){
+        if (Optional.ofNullable(compilationNewDto.getTitle()).isPresent()) {
             compilation.setTitle(compilationNewDto.getTitle());
         }
-        if (Optional.ofNullable(compilationNewDto.getPinned()).isPresent()){
+        if (Optional.ofNullable(compilationNewDto.getPinned()).isPresent()) {
             compilation.setPinned(compilationNewDto.getPinned());
         }
         return getCompilationFullDto(compilationNewDto, compilation);
@@ -130,7 +130,7 @@ public class CompilationServiceImpl implements CompilationService{
     public void delete(Long id) {
         try {
             compilationRepository.getReferenceById(id).getTitle();
-            if (!compilationEventRepository.findAllByCompilationId(id).isEmpty()){
+            if (!compilationEventRepository.findAllByCompilationId(id).isEmpty()) {
                 compilationEventRepository.deleteByCompilationId(id);
             }
             compilationRepository.deleteById(id);

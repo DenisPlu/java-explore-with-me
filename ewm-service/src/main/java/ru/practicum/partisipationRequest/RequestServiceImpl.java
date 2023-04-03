@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 @Getter
 @RequiredArgsConstructor
-public class RequestServiceImpl implements RequestService{
+public class RequestServiceImpl implements RequestService {
 
 
     private final RequestRepository requestRepository;
@@ -34,7 +34,7 @@ public class RequestServiceImpl implements RequestService{
     }
 
     @Override
-    public List <Request> getByUserAndEventId(Long userId, Long eventId) {
+    public List<Request> getByUserAndEventId(Long userId, Long eventId) {
         return requestRepository.getByUserAndEventId(userId, eventId);
     }
 
@@ -50,9 +50,9 @@ public class RequestServiceImpl implements RequestService{
     @Override
     public List<Request> updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto) {
         List<Request> requests = requestRepository.getByUserAndEventId(userId, eventId);
-        for (Request request: requests){
-            if (requestUpdateDto.getRequestIds().contains(request.getId())){
-                if (requestUpdateDto.getStatus().equals(RequestUpdateState.CONFIRMED)){
+        for (Request request : requests) {
+            if (requestUpdateDto.getRequestIds().contains(request.getId())) {
+                if (requestUpdateDto.getStatus().equals(RequestUpdateState.CONFIRMED)) {
                     request.setStatus(RequestState.CONFIRMED);
                 } else if (requestUpdateDto.getStatus().equals(RequestUpdateState.REJECTED)) {
                     request.setStatus(RequestState.CANCELED);

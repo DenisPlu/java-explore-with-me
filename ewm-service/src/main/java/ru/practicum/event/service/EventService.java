@@ -13,8 +13,8 @@ public interface EventService {
     EventFullDto create(Long id, EventNewDto eventNewDto);
 
     List<EventFullDto> searchEventsPublic(String text, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                     boolean onlyAvailable, List<Integer> categories, String sort,
-                                     Integer from, Integer size, String endpointPath) throws JSONException, JsonProcessingException;
+                                          boolean onlyAvailable, List<Integer> categories, String sort,
+                                          Integer from, Integer size, String endpointPath) throws JSONException, JsonProcessingException;
 
     EventFullDto getByEventId(Long id, String endpointPath);
 

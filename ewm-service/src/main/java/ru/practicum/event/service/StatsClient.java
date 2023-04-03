@@ -15,7 +15,7 @@ public class StatsClient {
     public List<HitDto> getStats(String uris) {
         RestTemplate rest = new RestTemplate();
         HitDto[] forNow = rest.getForObject(API_path + uris, HitDto[].class);
-        List<HitDto> hitDtos= Arrays.asList(forNow);
+        List<HitDto> hitDtos = Arrays.asList(forNow);
         return hitDtos;
     }
 }

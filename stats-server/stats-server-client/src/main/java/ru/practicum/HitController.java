@@ -28,14 +28,6 @@ public class HitController {
         return hitService.create(HitMapper.toHitFromHitDtoMin(hitDtoMin, clientIP));
     }
 
-    //public String create(@RequestParam String app,
-    //                     @RequestParam String uri,
-    //                     HttpServletRequest request) {
-    //    String clientIP = request.getRemoteAddr();
-    //    log.info("Received a request to create a new Hit, app = {}, endpointPath = {}, clientIP = {}", app, uri, clientIP);
-    //    return hitService.create(app, uri, clientIP);
-    //}
-
     @GetMapping("/stats")
     public List<HitDto> getStats(@RequestParam(defaultValue = "2000-01-01 00:00:00") String start,
                                  @RequestParam(defaultValue = "2030-01-01 00:00:00") String end,

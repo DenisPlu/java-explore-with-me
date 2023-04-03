@@ -2,6 +2,7 @@ package ru.practicum.event.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,25 +34,32 @@ import java.util.Optional;
 @Service
 @Getter
 @RequiredArgsConstructor
-public class EventServiceImpl implements EventService{
+public class EventServiceImpl implements EventService {
 
+    @Autowired
     private final EventRepository eventRepository;
 
+    @Autowired
     private final LocationRepository locationRepository;
 
+    @Autowired
     private final CategoryRepository categoryRepository;
 
+    @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
     private final RequestRepository requestRepository;
 
+    @Autowired
     private final StatsClient statsClient;
 
+    @Autowired
     private final HitsClient hitsClient;
 
     @Override
     public EventFullDto create(Long userId, EventNewDto eventNewDto) {
-        if (LocalDateTime.parse(eventNewDto.getEventDate().replaceAll(" ", "T")).isAfter(LocalDateTime.now().plusHours(2))){
+        if (LocalDateTime.parse(eventNewDto.getEventDate().replaceAll(" ", "T")).isAfter(LocalDateTime.now().plusHours(2))) {
             Long locationId = locationRepository.save(eventNewDto.getLocation()).getId();
             LocationDto locationDto = LocationMapper.toLocationDtoFromLocation(eventNewDto.getLocation());
             Event event = eventRepository.save(EventMapper.toEventFromEventNewDto(userId, locationId, eventNewDto));
@@ -67,7 +75,7 @@ public class EventServiceImpl implements EventService{
     public List<EventFullDto> getByUserId(Long id, Integer size, Integer from) {
         List<Event> events = eventRepository.getByUserIdWithPagination(id, size, from);
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
-        for (Event event: events){
+        for (Event event : events) {
             eventFullDtoList.add(toEventFullDtoFromEvent(event));
         }
         return eventFullDtoList;
@@ -90,7 +98,7 @@ public class EventServiceImpl implements EventService{
         String uriEvent = "/events/" + event.getId().toString();
         List<HitDto> hitDtos = statsClient.getStats(uriEvent);
         Integer views = 0;
-        if (!hitDtos.isEmpty()){
+        if (!hitDtos.isEmpty()) {
             views = hitDtos.get(0).getHits();
         }
         Integer confirmedRequests = requestRepository.getAllByEventIdAndConfirmedStatus(event.getId());
@@ -99,31 +107,31 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public List<EventFullDto> searchEventsPublic(String text, boolean paid, LocalDateTime startTime, LocalDateTime endTime,
-                                            boolean onlyAvailable, List<Integer> categories, String sort,
-                                            Integer size, Integer from, String endpointPath) throws JSONException {
+                                                 boolean onlyAvailable, List<Integer> categories, String sort,
+                                                 Integer size, Integer from, String endpointPath) throws JSONException {
         List<Event> events;
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
-        if (onlyAvailable){
-            if (categories.get(0) == 0){
+        if (onlyAvailable) {
+            if (categories.get(0) == 0) {
                 events = eventRepository.searchEventsPublicOnlyAvailableAllCategories(
                         text, paid, startTime, endTime, sort, size, from);
             } else {
                 events = eventRepository.searchEventsPublicOnlyAvailable(
                         text, paid, startTime, endTime, categories, sort, size, from);
             }
-            for(Event event: events){
+            for (Event event : events) {
                 eventFullDtoList.add(toEventFullDtoFromEvent(event));
                 hitsClient.createHit("ewm-main-service", endpointPath);
             }
         } else {
-            if (categories.get(0) == 0){
+            if (categories.get(0) == 0) {
                 events = eventRepository.searchEventsPublicAllCategories(
                         text, paid, startTime, endTime, sort.toLowerCase(), size, from);
             } else {
                 events = eventRepository.searchEventsPublic(
                         text, paid, startTime, endTime, categories, sort.toLowerCase(), size, from);
             }
-            for(Event event: events){
+            for (Event event : events) {
                 eventFullDtoList.add(toEventFullDtoFromEvent(event));
                 hitsClient.createHit("ewm-main-service", endpointPath);
             }
@@ -148,13 +156,13 @@ public class EventServiceImpl implements EventService{
         Event event = eventRepository.getReferenceById(eventId);
         LocalDateTime startTime = event.getEventDate();
         if (startTime.isAfter(LocalDateTime.now().plusHours(2)) && !event.getState().equals(EventState.PUBLISHED)
-                && event.getInitiatorId().equals(userId)){
+                && event.getInitiatorId().equals(userId)) {
             checkAndUpdateEvent(eventUpdateDto, event);
-            if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()){
-                if (eventUpdateDto.getStateAction().equals(StateAction.SEND_TO_REVIEW)){
+            if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()) {
+                if (eventUpdateDto.getStateAction().equals(StateAction.SEND_TO_REVIEW)) {
                     event.setState(EventState.PENDING);
                 }
-                if (eventUpdateDto.getStateAction().equals(StateAction.CANCEL_REVIEW)){
+                if (eventUpdateDto.getStateAction().equals(StateAction.CANCEL_REVIEW)) {
                     event.setState(EventState.CANCELED);
                 }
             }
@@ -165,33 +173,33 @@ public class EventServiceImpl implements EventService{
     }
 
     private void checkAndUpdateEvent(EventUpdateDto eventUpdateDto, Event event) {
-        if (Optional.ofNullable(eventUpdateDto.getTitle()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getTitle()).isPresent()) {
             event.setTitle(eventUpdateDto.getTitle());
         }
-        if (Optional.ofNullable(eventUpdateDto.getDescription()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getDescription()).isPresent()) {
             event.setDescription(eventUpdateDto.getDescription());
         }
-        if (Optional.ofNullable(eventUpdateDto.getAnnotation()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getAnnotation()).isPresent()) {
             event.setAnnotation(eventUpdateDto.getAnnotation());
         }
-        if (Optional.ofNullable(eventUpdateDto.getCategory()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getCategory()).isPresent()) {
             event.setCategoryId(eventUpdateDto.getCategory());
         }
-        if (Optional.ofNullable(eventUpdateDto.getEventDate()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getEventDate()).isPresent()) {
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
             LocalDateTime eventDate = LocalDateTime.parse(eventUpdateDto.getEventDate().replaceAll(" ", "T"), formatter);
             event.setEventDate(eventDate);
         }
-        if (Optional.ofNullable(eventUpdateDto.getLocation()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getLocation()).isPresent()) {
             event.setLocationId(locationRepository.save(eventUpdateDto.getLocation()).getId());
         }
-        if (Optional.ofNullable(eventUpdateDto.getPaid()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getPaid()).isPresent()) {
             event.setPaid(Boolean.parseBoolean(eventUpdateDto.getPaid()));
         }
-        if (Optional.ofNullable(eventUpdateDto.getParticipantLimit()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getParticipantLimit()).isPresent()) {
             event.setParticipantLimit(eventUpdateDto.getParticipantLimit());
         }
-        if (Optional.ofNullable(eventUpdateDto.getRequestModeration()).isPresent()){
+        if (Optional.ofNullable(eventUpdateDto.getRequestModeration()).isPresent()) {
             event.setRequestModeration(Boolean.parseBoolean(eventUpdateDto.getRequestModeration()));
         }
     }
@@ -202,8 +210,8 @@ public class EventServiceImpl implements EventService{
                                                   Integer size, Integer from) {
         List<Event> events;
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
-        if (usersId.get(0) == 0){
-            if (categories.get(0) ==0){
+        if (usersId.get(0) == 0) {
+            if (categories.get(0) == 0) {
                 events = eventRepository.searchEventsByAdminFromAllUsersAndCategories(
                         states, startTime, endTime, size, from);
             } else {
@@ -211,7 +219,7 @@ public class EventServiceImpl implements EventService{
                         states, categories, startTime, endTime, size, from);
             }
         } else {
-            if (categories.get(0) ==0){
+            if (categories.get(0) == 0) {
                 events = eventRepository.searchEventsByAdminFromAllCategories(
                         usersId, states, startTime, endTime, size, from);
             } else {
@@ -219,7 +227,7 @@ public class EventServiceImpl implements EventService{
                         usersId, states, categories, startTime, endTime, size, from);
             }
         }
-        for(Event event: events){
+        for (Event event : events) {
             eventFullDtoList.add(toEventFullDtoFromEvent(event));
         }
         return eventFullDtoList;
@@ -229,14 +237,14 @@ public class EventServiceImpl implements EventService{
     public EventFullDto updateByAdmin(Long eventId, EventUpdateDto eventUpdateDto) {
         Event event = eventRepository.getReferenceById(eventId);
         LocalDateTime startTime = event.getEventDate();
-        if (startTime.isAfter(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.PENDING)){
+        if (startTime.isAfter(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.PENDING)) {
             checkAndUpdateEvent(eventUpdateDto, event);
-            if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()){
-                if (eventUpdateDto.getStateAction().equals(StateAction.PUBLISH_EVENT)){
+            if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()) {
+                if (eventUpdateDto.getStateAction().equals(StateAction.PUBLISH_EVENT)) {
                     event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
                 }
-                if (eventUpdateDto.getStateAction().equals(StateAction.REJECT_EVENT)){
+                if (eventUpdateDto.getStateAction().equals(StateAction.REJECT_EVENT)) {
                     event.setState(EventState.CANCELED);
                 }
             }

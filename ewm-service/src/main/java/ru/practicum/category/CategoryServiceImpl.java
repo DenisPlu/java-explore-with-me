@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Getter
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
@@ -57,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public void delete(Integer id) {
-        if (eventRepository.findAllByCategoryId(id).isEmpty()){
+        if (eventRepository.findAllByCategoryId(id).isEmpty()) {
             categoryRepository.deleteById(id);
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Category с запрошенным id не существует или есть связанные ивенты");

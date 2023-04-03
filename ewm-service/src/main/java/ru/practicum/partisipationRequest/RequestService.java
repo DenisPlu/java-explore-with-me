@@ -7,7 +7,7 @@ public interface RequestService {
 
     List<Request> get(Long id);
 
-    List <Request> getByUserAndEventId(Long userId, Long eventId);
+    List<Request> getByUserAndEventId(Long userId, Long eventId);
 
     Request cancelRequestByUser(Long userId, Long requestId);
 

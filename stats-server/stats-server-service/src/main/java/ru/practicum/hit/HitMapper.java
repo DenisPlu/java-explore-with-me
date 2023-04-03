@@ -6,7 +6,8 @@ import ru.practicum.HitDtoMin;
 import java.time.LocalDateTime;
 
 public final class HitMapper {
-    private HitMapper(){};
+    private HitMapper() {
+    }
 
     public static HitDto toHitDto(Hit hit, Long hitsNumber) {
 
