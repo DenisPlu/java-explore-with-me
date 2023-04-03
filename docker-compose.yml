@@ -24,7 +24,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=denden
     volumes:
-      - /var/lib/PostgresSQL/data/
+      - /var/lib/postgresql/data/
 
   ewm-service:
     build: ewm-service/
@@ -51,4 +51,4 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=denden
     volumes:
-      - /var/lib/PostgresSQL/data/
+      - /var/lib/postgresql/data/
