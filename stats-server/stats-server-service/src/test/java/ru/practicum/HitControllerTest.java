@@ -111,7 +111,7 @@ public class HitControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.[0].app", is(hitDto1.getApp()), String.class))
                 .andExpect(jsonPath("$.[0].uri", is(hitDto1.getUri()), String.class))
-                .andExpect(jsonPath("$.[0].hits", is(hitDto1.getHits()), Long.class));
+                .andExpect(jsonPath("$.[0].hits", is(hitDto1.getHits()), Integer.class));
     }
 
     @Test
@@ -126,6 +126,6 @@ public class HitControllerTest {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[1].app", is(hitDto2.getApp()), String.class))
                 .andExpect(jsonPath("$.[1].uri", is(hitDto2.getUri()), String.class))
-                .andExpect(jsonPath("$.[1].hits", is(hitDto2.getHits()), Long.class));
+                .andExpect(jsonPath("$.[1].hits", is(hitDto2.getHits()), Integer.class));
     }
 }
