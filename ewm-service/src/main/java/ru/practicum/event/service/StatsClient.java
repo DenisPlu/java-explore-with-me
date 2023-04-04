@@ -2,7 +2,7 @@ package ru.practicum.event.service;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.hit.HitDto;
+import ru.practicum.HitDto;
 
 import java.util.Arrays;
 import java.util.List;

@@ -16,7 +16,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>stats-server-service</module>
-        <module>stats-server-client</module>
         <module>stats-server-dto</module>
     </modules>
 

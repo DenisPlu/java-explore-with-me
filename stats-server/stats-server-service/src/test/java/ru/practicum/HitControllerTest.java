@@ -14,6 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.HitDto;
+import ru.practicum.HitDtoMin;
+import ru.practicum.hit.HitController;
 import ru.practicum.hit.HitServiceImpl;
 
 import java.nio.charset.StandardCharsets;
@@ -56,19 +59,19 @@ public class HitControllerTest {
         hitDto1 = new HitDto(
                 "ewm-main-service",
                 "/events/1",
-                3L
+                3
         );
 
         hitDto2 = new HitDto(
                 "ewm-main-service",
                 "/events/2",
-                3L
+                3
         );
 
         hitDto3 = new HitDto(
                 "ewm-main-service",
                 "/events/2",
-                3L
+                3
         );
 
         hitDtoMin = new HitDtoMin(

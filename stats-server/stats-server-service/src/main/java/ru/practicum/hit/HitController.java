@@ -1,11 +1,11 @@
-package ru.practicum;
+package ru.practicum.hit;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.hit.HitMapper;
-import ru.practicum.hit.HitServiceImpl;
+import ru.practicum.HitDto;
+import ru.practicum.HitDtoMin;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;

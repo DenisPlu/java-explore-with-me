@@ -63,7 +63,7 @@ public class HitServiceImpl implements HitService {
         Map<String, Long> frequency = hits.stream().collect(groupingBy(Hit::getUri, Collectors.counting()));
         List<HitDto> hitsDtoList = new ArrayList<>();
         for (Hit hit : uniqueList) {
-            hitsDtoList.add(toHitDto(hit, frequency.get(hit.getUri())));
+            hitsDtoList.add(toHitDto(hit, Math.toIntExact(frequency.get(hit.getUri()))));
         }
         hitsDtoList.sort(Comparator.comparingLong(HitDto::getHits).reversed());
         return hitsDtoList;

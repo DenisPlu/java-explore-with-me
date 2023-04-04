@@ -2,11 +2,11 @@ package ru.practicum.event.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.HitDto;
 import ru.practicum.category.Category;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.event.dto.EventFullDto;
@@ -19,7 +19,6 @@ import ru.practicum.event.location.LocationRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.model.StateAction;
-import ru.practicum.hit.HitDto;
 import ru.practicum.partisipationRequest.RequestRepository;
 import ru.practicum.user.UserMapper;
 import ru.practicum.user.UserRepository;
@@ -36,25 +35,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
-    @Autowired
     private final EventRepository eventRepository;
 
-    @Autowired
     private final LocationRepository locationRepository;
 
-    @Autowired
     private final CategoryRepository categoryRepository;
 
-    @Autowired
     private final UserRepository userRepository;
 
-    @Autowired
     private final RequestRepository requestRepository;
 
-    @Autowired
     private final StatsClient statsClient;
 
-    @Autowired
     private final HitsClient hitsClient;
 
     @Override

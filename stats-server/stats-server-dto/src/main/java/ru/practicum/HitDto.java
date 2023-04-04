@@ -13,5 +13,5 @@ public class HitDto {
 
     String uri;
 
-    Long hits;
+    Integer hits;
 }

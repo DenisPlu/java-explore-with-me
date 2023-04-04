@@ -9,7 +9,7 @@ public final class HitMapper {
     private HitMapper() {
     }
 
-    public static HitDto toHitDto(Hit hit, Long hitsNumber) {
+    public static HitDto toHitDto(Hit hit, Integer hitsNumber) {
 
         return new HitDto(
                 hit.getApp(),
