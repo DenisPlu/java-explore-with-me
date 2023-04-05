@@ -2,7 +2,6 @@ package ru.practicum.event.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-//import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
