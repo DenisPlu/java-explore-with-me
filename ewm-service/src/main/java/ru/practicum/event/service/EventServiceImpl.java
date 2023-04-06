@@ -59,7 +59,7 @@ public class EventServiceImpl implements EventService {
             UserShortDto userShortDto = UserMapper.toUserShortDtoFromUser(userRepository.getReferenceById(userId));
             return getEventWithViews(event, locationDto, category, userShortDto);
         } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Событие не удовлетворяет правилам создания");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Событие не удовлетворяет правилам создания");
         }
     }
 
@@ -228,7 +228,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto updateByAdmin(Long eventId, EventUpdateDto eventUpdateDto) {
         Event event = eventRepository.getReferenceById(eventId);
-        LocalDateTime startTime = event.getEventDate();
+        LocalDateTime startTime;
+        if (Optional.ofNullable(eventUpdateDto.getEventDate()).isEmpty()) {
+            startTime = LocalDateTime.now().plusHours(10);
+        } else {
+            String rangeStart = eventUpdateDto.getEventDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            startTime = LocalDateTime.parse(rangeStart.replaceAll(" ", "T"), formatter);
+        }
         if (startTime.isAfter(LocalDateTime.now().plusHours(1)) && event.getState().equals(EventState.PENDING)) {
             checkAndUpdateEvent(eventUpdateDto, event);
             if (Optional.ofNullable(eventUpdateDto.getStateAction()).isPresent()) {

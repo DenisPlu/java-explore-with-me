@@ -19,7 +19,6 @@ public class CategoryAdminController {
     @PostMapping
     public Category create(@RequestBody @Valid Category category) {
         log.info("Received a request to create a new Category: {}", category);
-        System.out.println(category);
         return categoryService.create(category);
     }
 

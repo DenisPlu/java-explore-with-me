@@ -16,7 +16,6 @@ public class StatsClient {
     private static final String API_PREFIX = "/stats" + "?uris=";
 
     public List<HitDto> getStats(String uris) {
-        System.out.println(serverUrl + API_PREFIX + uris);
         RestTemplate rest = new RestTemplate();
         HitDto[] forNow = rest.getForObject(serverUrl + API_PREFIX + uris, HitDto[].class);
         List<HitDto> hitDtos = Arrays.asList(forNow);
