@@ -60,7 +60,7 @@ public class RequestServiceImpl implements RequestService {
                         null,
                         LocalDateTime.now(),
                         eventId,
-                        userId,
+                        userId - 1,
                         RequestState.valueOf("CONFIRMED")
                 );
             } else {
@@ -68,7 +68,7 @@ public class RequestServiceImpl implements RequestService {
                         null,
                         LocalDateTime.now(),
                         eventId,
-                        userId,
+                        userId - 1,
                         RequestState.valueOf("PENDING")
                 );
             }
