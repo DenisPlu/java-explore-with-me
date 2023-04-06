@@ -5,7 +5,7 @@ public class RequestMapper {
     public RequestMapper() {
     }
 
-    public static RequestDto toRequestMapperFromRequest(Request request) {
+    public static RequestDto toRequestDtoFromRequest(Request request) {
         return new RequestDto(
                 request.getId(),
                 request.getCreated(),

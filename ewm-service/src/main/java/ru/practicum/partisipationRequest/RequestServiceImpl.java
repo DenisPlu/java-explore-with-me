@@ -10,7 +10,9 @@ import ru.practicum.event.model.EventState;
 import ru.practicum.event.service.EventRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,10 +28,11 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Request create(Long userId, Long eventId) {
-        //System.out.println("userId = " + userId + " eventId = " + eventId);
+        System.out.println("userId = " + userId + " eventId = " + eventId);
         boolean isExists = !getByUserAndEventId(userId, eventId).isEmpty();
-        //System.out.println(Optional.ofNullable(getByUserAndEventId(userId, eventId)));
-        //System.out.println("isExists = " + isExists);
+        System.out.println(getByUserAndEventId(userId, eventId));
+        System.out.println(getByUserAndEventId(userId, eventId).isEmpty());
+        System.out.println("isExists = " + isExists);
 
         boolean isYourEvent = eventRepository.getReferenceById(eventId).getInitiatorId().equals(userId);
         //System.out.println("isYourEvent = " + isYourEvent);
@@ -39,15 +42,15 @@ public class RequestServiceImpl implements RequestService {
 
         boolean isParticipationLimitGot = eventRepository.getReferenceById(eventId).getParticipantLimit()
                 <= eventRepository.getReferenceById(eventId).getConfirmedRequests();
-        //System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
-        //System.out.println("eventRepository.getReferenceById(eventId).getConfirmedRequests()" + eventRepository.getReferenceById(eventId).getConfirmedRequests());
-        //System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
+        System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
+        System.out.println("eventRepository.getReferenceById(eventId).getConfirmedRequests()" + eventRepository.getReferenceById(eventId).getConfirmedRequests());
+        System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
 
         boolean isModerateOn = eventRepository.getReferenceById(eventId).isRequestModeration();
 
         //System.out.println("isModerateOn = " + isModerateOn);
 
-        //System.out.println(!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot && isModerateOn);
+        System.out.println(!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot);
 
 
         if (!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot) {
@@ -91,24 +94,33 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Request cancelRequestByUser(Long userId, Long requestId) {
         Request request = requestRepository.getReferenceById(requestId);
-        if (request.getRequester() == userId) {
-            request.setStatus(RequestState.PENDING);
-        }
+            request.setStatus(RequestState.CANCELED);
         return requestRepository.save(request);
     }
 
     @Override
-    public List<Request> updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto) {
+    public RequestUpdateResultDto updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto) {
+        System.out.println("userId = " + userId + " eventId = " + eventId);
+        System.out.println(requestUpdateDto);
+
         List<Request> requests = requestRepository.getByUserAndEventId(userId, eventId);
+
+        System.out.println(requests);
+
+        RequestUpdateResultDto requestResultList = new RequestUpdateResultDto(new ArrayList<RequestDto>(), new ArrayList<RequestDto>());
+
         for (Request request : requests) {
             if (requestUpdateDto.getRequestIds().contains(request.getId())) {
                 if (requestUpdateDto.getStatus().equals(RequestUpdateState.CONFIRMED)) {
                     request.setStatus(RequestState.CONFIRMED);
+                    requestResultList.getConfirmedRequests().add(RequestMapper.toRequestDtoFromRequest(request));
                 } else if (requestUpdateDto.getStatus().equals(RequestUpdateState.REJECTED)) {
-                    request.setStatus(RequestState.CANCELED);
+                    request.setStatus(RequestState.REJECTED);
+                    requestResultList.getRejectedRequests().add(RequestMapper.toRequestDtoFromRequest(request));
                 }
             }
         }
-        return requests;
+        System.out.println(requestResultList);
+        return requestResultList;
     }
 }

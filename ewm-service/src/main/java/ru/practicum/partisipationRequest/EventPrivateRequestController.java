@@ -16,10 +16,10 @@ public class EventPrivateRequestController {
     private final RequestServiceImpl requestService;
 
     @PatchMapping
-    public List<Request> updateRequestsStatus(@PathVariable Long userId,
+    public RequestUpdateResultDto updateRequestsStatus(@PathVariable Long userId,
                                               @PathVariable Long eventId,
                                               @RequestBody @Valid RequestUpdateDto requestUpdateDto) {
-        log.info("Received a request from user with id {} to update events id: {}, requestUpdateDto: {}", userId, eventId, requestUpdateDto);
+        log.info("Received a request from user with id {} to update event id: {}, requestUpdateDto: {}", userId, eventId, requestUpdateDto);
         return requestService.updateRequestsStatus(userId, eventId, requestUpdateDto);
     }
 

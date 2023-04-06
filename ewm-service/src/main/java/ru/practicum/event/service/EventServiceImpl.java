@@ -146,7 +146,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto updateByUser(Long userId, Long eventId, EventUpdateDto eventUpdateDto) {
         Event event = eventRepository.getReferenceById(eventId);
-        LocalDateTime startTime = event.getEventDate();
+        LocalDateTime startTime;
+        if (Optional.ofNullable(eventUpdateDto.getEventDate()).isEmpty()) {
+            startTime = LocalDateTime.now().plusHours(10);
+        } else {
+            String rangeStart = eventUpdateDto.getEventDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            startTime = LocalDateTime.parse(rangeStart.replaceAll(" ", "T"), formatter);
+        }
         if (startTime.isAfter(LocalDateTime.now().plusHours(2)) && !event.getState().equals(EventState.PUBLISHED)
                 && event.getInitiatorId().equals(userId)) {
             checkAndUpdateEvent(eventUpdateDto, event);

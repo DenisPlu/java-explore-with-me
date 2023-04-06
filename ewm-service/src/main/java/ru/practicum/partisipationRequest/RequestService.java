@@ -11,5 +11,5 @@ public interface RequestService {
 
     Request cancelRequestByUser(Long userId, Long requestId);
 
-    List<Request> updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto);
+    RequestUpdateResultDto updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto);
 }
