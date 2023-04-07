@@ -24,7 +24,7 @@ public class EventPublicController {
     @GetMapping
     public List<EventFullDto> searchEventsPublic(
             @RequestParam(defaultValue = "") String text,
-            @RequestParam(defaultValue = "") String paid,
+            @RequestParam(defaultValue = "false") String paid,
             @RequestParam(defaultValue = "empty") String rangeStart,
             @RequestParam(defaultValue = "empty") String rangeEnd,
             @RequestParam(defaultValue = "false") String onlyAvailable,
