@@ -120,7 +120,6 @@ public class EventServiceImpl implements EventService {
                 events = eventRepository.searchEventsPublicAllCategories(
                         text, paid, startTime, endTime, sort.toLowerCase(), size, from);
             } else {
-                System.out.println("NotAvailable, not null category");
                 events = eventRepository.searchEventsPublic(
                         text, paid, startTime, endTime, categories, sort.toLowerCase(), size, from);
             }

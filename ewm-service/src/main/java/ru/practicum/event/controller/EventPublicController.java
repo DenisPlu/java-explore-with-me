@@ -45,7 +45,7 @@ public class EventPublicController {
             startTime = LocalDateTime.parse(rangeStart.replaceAll(" ", "T"), formatter);
             endTime = LocalDateTime.parse(rangeEnd.replaceAll(" ", "T"), formatter);
         }
-        return eventService.searchEventsPublic(text, Boolean.getBoolean(paid), startTime, endTime,
+        return eventService.searchEventsPublic(text, Boolean.parseBoolean(paid), startTime, endTime,
                 Boolean.getBoolean(onlyAvailable), categories, sort, size, from, endpointPath);
     }
 
