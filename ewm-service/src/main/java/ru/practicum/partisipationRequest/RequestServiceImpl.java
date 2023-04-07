@@ -29,7 +29,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Request create(Long userId, Long eventId) {
         System.out.println("userId = " + userId + " eventId = " + eventId);
-        boolean isExists = !getByUserAndEventId(userId, eventId).isEmpty();
+        boolean isExists = !getByUserAndEventId(userId - 1, eventId).isEmpty();
         System.out.println(getByUserAndEventId(userId, eventId));
         System.out.println(getByUserAndEventId(userId, eventId).isEmpty());
         System.out.println("isExists = " + isExists);
@@ -54,6 +54,7 @@ public class RequestServiceImpl implements RequestService {
 
 
         if (!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot) {
+            System.out.println("!!!");
             Request request;
             if (!isModerateOn) {
                 request = new Request(
@@ -77,13 +78,15 @@ public class RequestServiceImpl implements RequestService {
             //System.out.println(eventRepository.save(event));
             return requestRepository.save(request);
         } else {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Участие в Событии не удовлетворяет правилам создания");
+            System.out.println("CONFLICT");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event с запрошенным id не существует");
+            //return null;
         }
     }
 
     @Override
     public List<Request> get(Long userId) {
-        return requestRepository.getAllByUserId(userId);
+        return requestRepository.getAllByUserId(userId - 1);
     }
 
     @Override
@@ -113,10 +116,16 @@ public class RequestServiceImpl implements RequestService {
             if (requestUpdateDto.getRequestIds().contains(request.getId())) {
                 if (requestUpdateDto.getStatus().equals(RequestUpdateState.CONFIRMED)) {
                     request.setStatus(RequestState.CONFIRMED);
+                    requestRepository.save(request);
                     requestResultList.getConfirmedRequests().add(RequestMapper.toRequestDtoFromRequest(request));
-                } else if (requestUpdateDto.getStatus().equals(RequestUpdateState.REJECTED)) {
+                } else if (requestUpdateDto.getStatus().equals(RequestUpdateState.REJECTED)
+                        && !request.getStatus().equals(RequestState.CONFIRMED)) {
+                    System.out.println(request.getStatus().equals(RequestState.CONFIRMED));
                     request.setStatus(RequestState.REJECTED);
+                    requestRepository.save(request);
                     requestResultList.getRejectedRequests().add(RequestMapper.toRequestDtoFromRequest(request));
+                } else {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя отменить уже принятую заявку");
                 }
             }
         }
