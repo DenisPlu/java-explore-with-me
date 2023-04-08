@@ -40,20 +40,20 @@ public class RequestServiceImpl implements RequestService {
         boolean isEventPublished = eventRepository.getReferenceById(eventId).getState().equals(EventState.PUBLISHED);
         //System.out.println("isEventPublished = " + isEventPublished);
 
-        boolean isParticipationLimitGot = eventRepository.getReferenceById(eventId).getParticipantLimit()
-                <= eventRepository.getReferenceById(eventId).getConfirmedRequests();
-        System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
-        System.out.println("eventRepository.getReferenceById(eventId).getConfirmedRequests()" + eventRepository.getReferenceById(eventId).getConfirmedRequests());
-        System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
+        //boolean isParticipationLimitGot = eventRepository.getReferenceById(eventId).getParticipantLimit()
+                //<= eventRepository.getReferenceById(eventId).getConfirmedRequests();
+        //System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
+        //System.out.println("eventRepository.getReferenceById(eventId).getConfirmedRequests()" + eventRepository.getReferenceById(eventId).getConfirmedRequests());
+        //System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
 
         boolean isModerateOn = eventRepository.getReferenceById(eventId).isRequestModeration();
 
         //System.out.println("isModerateOn = " + isModerateOn);
 
-        System.out.println(!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot);
+        //System.out.println(!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot);
 
 
-        if (!isExists && !isYourEvent && isEventPublished && !isParticipationLimitGot) {
+        if (!isExists && !isYourEvent && isEventPublished) {
             System.out.println("!!!");
             Request request;
             if (!isModerateOn) {
@@ -73,8 +73,8 @@ public class RequestServiceImpl implements RequestService {
                         RequestState.valueOf("PENDING")
                 );
             }
-            Event event = eventRepository.getReferenceById(eventId);
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            //Event event = eventRepository.getReferenceById(eventId);
+            //event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             //System.out.println(eventRepository.save(event));
             return requestRepository.save(request);
         } else {
@@ -103,10 +103,24 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestUpdateResultDto updateRequestsStatus(Long userId, Long eventId, RequestUpdateDto requestUpdateDto) {
+
+        //если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
+        //нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие (Ожидается код ошибки 409)
+        //статус можно изменить только у заявок, находящихся в состоянии ожидания (Ожидается код ошибки 409)
+        //если при подтверждении данной заявки, лимит заявок для события исчерпан, то все неподтверждённые заявки необходимо отклонить
+
+        boolean isParticipationLimitGot = eventRepository.getReferenceById(eventId).getParticipantLimit()
+                <= eventRepository.getReferenceById(eventId).getConfirmedRequests();
+        System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
+        System.out.println("eventRepository.getReferenceById(eventId).getConfirmedRequests()" + eventRepository.getReferenceById(eventId).getConfirmedRequests());
+        System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
+
+        boolean isModerateOn = eventRepository.getReferenceById(eventId).isRequestModeration();
+
         System.out.println("userId = " + userId + " eventId = " + eventId);
         System.out.println(requestUpdateDto);
 
-        List<Request> requests = requestRepository.getByUserAndEventId(userId, eventId);
+        List<Request> requests = requestRepository.getByRequestsList(requestUpdateDto.getRequestIds());
 
         System.out.println(requests);
 
@@ -115,12 +129,21 @@ public class RequestServiceImpl implements RequestService {
         for (Request request : requests) {
             if (requestUpdateDto.getRequestIds().contains(request.getId())) {
                 if (requestUpdateDto.getStatus().equals(RequestUpdateState.CONFIRMED)) {
-                    request.setStatus(RequestState.CONFIRMED);
-                    requestRepository.save(request);
-                    requestResultList.getConfirmedRequests().add(RequestMapper.toRequestDtoFromRequest(request));
+                    System.out.println("ветка CONFIRMED");
+                    if (isParticipationLimitGot) {
+                        System.out.println("ветка CONFIRMED, ResponseStatusException");
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Достигнут лимит участников");
+                    } else {
+                        System.out.println("ветка CONFIRMED, CONFIRMED");
+                        request.setStatus(RequestState.CONFIRMED);
+                        Event event = eventRepository.getReferenceById(eventId);
+                        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                        requestRepository.save(request);
+                        requestResultList.getConfirmedRequests().add(RequestMapper.toRequestDtoFromRequest(request));
+                    }
                 } else if (requestUpdateDto.getStatus().equals(RequestUpdateState.REJECTED)
                         && !request.getStatus().equals(RequestState.CONFIRMED)) {
-                    System.out.println(request.getStatus().equals(RequestState.CONFIRMED));
+                    System.out.println("ветка REJECTED" + request.getStatus().equals(RequestState.CONFIRMED));
                     request.setStatus(RequestState.REJECTED);
                     requestRepository.save(request);
                     requestResultList.getRejectedRequests().add(RequestMapper.toRequestDtoFromRequest(request));

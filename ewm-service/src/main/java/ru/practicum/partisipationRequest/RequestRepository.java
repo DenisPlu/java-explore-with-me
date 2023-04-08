@@ -15,4 +15,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     @Query(value = "SELECT COUNT(*) FROM participation_request WHERE status = 'CONFIRMED' AND event_id = ?1", nativeQuery = true)
     Integer getAllByEventIdAndConfirmedStatus(Long eventId);
+
+    @Query(value = "SELECT * FROM participation_request WHERE id IN (?1)", nativeQuery = true)
+    List<Request> getByRequestsList(List<Long> requestIds);
 }
