@@ -40,11 +40,11 @@ public class RequestServiceImpl implements RequestService {
         boolean isEventPublished = eventRepository.getReferenceById(eventId).getState().equals(EventState.PUBLISHED);
         //System.out.println("isEventPublished = " + isEventPublished);
 
-        //boolean isParticipationLimitGot = eventRepository.getReferenceById(eventId).getParticipantLimit()
-                //<= eventRepository.getReferenceById(eventId).getConfirmedRequests();
-        //System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
+        boolean isParticipationLimitGot = eventRepository.getReferenceById(eventId).getParticipantLimit()
+                <= eventRepository.getReferenceById(eventId).getConfirmedRequests();
+        System.out.println("eventRepository.getReferenceById(eventId).getParticipantLimit()" + eventRepository.getReferenceById(eventId).getParticipantLimit());
         //System.out.println("eventRepository.getReferenceById(eventId).getConfirmedRequests()" + eventRepository.getReferenceById(eventId).getConfirmedRequests());
-        //System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
+        System.out.println("isParticipationLimitGot = " + isParticipationLimitGot);
 
         boolean isModerateOn = eventRepository.getReferenceById(eventId).isRequestModeration();
 
@@ -56,7 +56,7 @@ public class RequestServiceImpl implements RequestService {
         if (!isExists && !isYourEvent && isEventPublished) {
             System.out.println("!!!");
             Request request;
-            if (!isModerateOn) {
+            if (!isModerateOn && !isParticipationLimitGot) {
                 request = new Request(
                         null,
                         LocalDateTime.now(),
@@ -64,6 +64,11 @@ public class RequestServiceImpl implements RequestService {
                         userId - 1,
                         RequestState.valueOf("CONFIRMED")
                 );
+                Event event = eventRepository.getReferenceById(eventId);
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                //System.out.println(eventRepository.save(event));
+            } else if (isParticipationLimitGot){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Event с запрошенным id не существует");
             } else {
                 request = new Request(
                         null,
@@ -73,9 +78,6 @@ public class RequestServiceImpl implements RequestService {
                         RequestState.valueOf("PENDING")
                 );
             }
-            //Event event = eventRepository.getReferenceById(eventId);
-            //event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-            //System.out.println(eventRepository.save(event));
             return requestRepository.save(request);
         } else {
             System.out.println("CONFLICT");
