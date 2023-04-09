@@ -15,10 +15,11 @@ public class StatsClient {
     private String serverUrl;
     private static final String API_PREFIX = "/stats" + "?uris=";
 
+    private static final String APP = "ewm-main-service";
+
     public List<HitDto> getStats(String uris) {
         RestTemplate rest = new RestTemplate();
-        HitDto[] forNow = rest.getForObject(serverUrl + API_PREFIX + uris, HitDto[].class);
-        List<HitDto> hitDtos = Arrays.asList(forNow);
-        return hitDtos;
+        HitDto[] forNow = rest.getForObject(serverUrl + API_PREFIX + uris + "&app=" + APP, HitDto[].class);
+        return Arrays.asList(forNow);
     }
 }

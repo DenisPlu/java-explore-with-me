@@ -101,7 +101,7 @@ public class HitControllerTest {
 
     @Test
     void getStatsForUri() throws Exception {
-        when(hitService.getStats(any(), any(), any(), any()))
+        when(hitService.getStats(any(), any(), any(), any(), any(), any()))
                 .thenReturn(List.of(hitDto1));
         mvc.perform(get("/stats/?start=2020-05-05 00:00:00&end=2035-05-05 00:00:00&uris={{/events/1}}")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -116,7 +116,7 @@ public class HitControllerTest {
 
     @Test
     void getStatsForAll() throws Exception {
-        when(hitService.getStats(any(), any(), any(), any()))
+        when(hitService.getStats(any(), any(), any(), any(), any(), any()))
                 .thenReturn(List.of(hitDto1, hitDto2, hitDto3));
         mvc.perform(get("/stats/?start=2020-05-05 00:00:00&end=2035-05-05 00:00:00")
                         .characterEncoding(StandardCharsets.UTF_8)

@@ -32,10 +32,14 @@ public class HitController {
     public List<HitDto> getStats(@RequestParam(defaultValue = "2000-01-01 00:00:00") String start,
                                  @RequestParam(defaultValue = "2030-01-01 00:00:00") String end,
                                  @RequestParam(defaultValue = "all") List<String> uris,
-                                 @RequestParam(defaultValue = "false") String unique) {
+                                 @RequestParam(defaultValue = "false") String unique,
+                                 @RequestParam(defaultValue = "") String app,
+                                 HttpServletRequest request) {
+        String clientIP = request.getRemoteAddr();
+        log.info("Received a request to get stats for uris {} a new Hit, unique: {} from: {}", uris, unique, clientIP);
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startTime = LocalDateTime.parse(start.replaceAll(" ", "T"), formatter);
         LocalDateTime endTime = LocalDateTime.parse(end.replaceAll(" ", "T"), formatter);
-        return hitService.getStats(startTime, endTime, uris, unique);
+        return hitService.getStats(startTime, endTime, uris, unique, app, clientIP);
     }
 }

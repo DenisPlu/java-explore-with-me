@@ -27,14 +27,37 @@ public class HitServiceImpl implements HitService {
     }
 
     @Override
-    public List<HitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, String unique) {
+    public List<HitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, String unique, String app, String clientIP) {
+
+        if (!app.equals("") && !uris.get(0).equals("all")) {
+            for (String uri : uris) {
+                hitRepository.save(new Hit(
+                        null,
+                        app,
+                        uri,
+                        clientIP,
+                        LocalDateTime.now()));
+            }
+        }
+
+        if (uris.get(0).equals("/events")) {
+            for (String uri : uris) {
+                hitRepository.save(new Hit(
+                        null,
+                        app,
+                        uri,
+                        clientIP,
+                        LocalDateTime.now()));
+            }
+        }
+
         List<Hit> baseHitList;
         if (uris.get(0).equals("all")) {
             baseHitList = hitRepository.findHitsByTimeDiapason(start, end);
         } else {
-            System.out.println(uris);
             baseHitList = hitRepository.findHitsByUriAndTimeDiapason(uris, start, end);
         }
+
         if (Boolean.parseBoolean(unique)) {
             return toUniqueHitsDtoList(baseHitList);
         } else {

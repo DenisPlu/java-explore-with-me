@@ -8,5 +8,5 @@ import java.util.List;
 public interface HitService {
     String create(Hit hit);
 
-    List<HitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, String unique);
+    List<HitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, String unique, String app, String clientIP);
 }

@@ -33,13 +33,16 @@ public class EventPublicController {
             @RequestParam(defaultValue = "10") @Positive Integer size,
             @RequestParam(defaultValue = "0") @Positive Integer from,
             HttpServletRequest request) throws JSONException {
+        log.info("Received a request to search Events by text = {} paid = {} ", text, paid);
+        log.info("Received a request to search Events by rangeStart = {} rangeEnd = {} ", rangeStart, rangeEnd);
+        log.info("Received a request to search Events onlyAvailable = {} categories = {} sort = {}", onlyAvailable, categories, sort);
         log.info("Received a request to search Events by ... size {} from {} ", size, from);
         String endpointPath = request.getRequestURI();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startTime;
         LocalDateTime endTime;
         if (rangeStart.equals("empty") || rangeEnd.equals("empty")) {
-            startTime = LocalDateTime.now();
+            startTime = LocalDateTime.now().minusYears(10);
             endTime = LocalDateTime.now().plusYears(10);
         } else {
             startTime = LocalDateTime.parse(rangeStart.replaceAll(" ", "T"), formatter);
