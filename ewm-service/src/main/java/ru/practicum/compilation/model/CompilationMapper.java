@@ -1,13 +1,12 @@
 package ru.practicum.compilation.model;
 
+import lombok.NoArgsConstructor;
 import ru.practicum.event.dto.EventShortDto;
 
 import java.util.List;
 
-public class CompilationMapper {
-
-    public CompilationMapper() {
-    }
+@NoArgsConstructor
+public final class CompilationMapper {
 
     public static CompilationFullDto toCompilationFullDtoFromCompilation(Compilation compilation, List<EventShortDto> events) {
         return new CompilationFullDto(

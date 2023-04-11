@@ -23,6 +23,7 @@ import ru.practicum.user.UserMapper;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.UserShortDto;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,15 +34,10 @@ import java.util.Optional;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
-
     private final CompilationEventRepository compilationEventRepository;
-
     private final EventRepository eventRepository;
-
     private final CategoryRepository categoryRepository;
-
     private final UserRepository userRepository;
-
     private final StatsClient statsClient;
 
     @Override
@@ -52,7 +48,6 @@ public class CompilationServiceImpl implements CompilationService {
 
     private CompilationFullDto getCompilationFullDto(CompilationNewDto compilationNewDto, Compilation compilation) {
         List<EventShortDto> events = new ArrayList<>();
-        System.out.println(compilation);
         Compilation savedCompilation = compilationRepository.save(compilation);
         for (Long eventId : compilationNewDto.getEvents()) {
             Event event = eventRepository.getReferenceById(eventId);
@@ -134,7 +129,7 @@ public class CompilationServiceImpl implements CompilationService {
                 compilationEventRepository.deleteByCompilationId(id);
             }
             compilationRepository.deleteById(id);
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Compilation с запрошенным id не существует");
         }
     }

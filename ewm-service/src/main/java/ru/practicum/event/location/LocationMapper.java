@@ -1,9 +1,9 @@
 package ru.practicum.event.location;
 
-public class LocationMapper {
+import lombok.NoArgsConstructor;
 
-    public LocationMapper() {
-    }
+@NoArgsConstructor
+public final class LocationMapper {
 
     public static LocationDto toLocationDtoFromLocation(Location location) {
         return new LocationDto(

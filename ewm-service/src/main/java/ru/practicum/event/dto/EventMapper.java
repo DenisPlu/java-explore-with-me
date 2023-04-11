@@ -1,5 +1,6 @@
 package ru.practicum.event.dto;
 
+import lombok.NoArgsConstructor;
 import ru.practicum.category.Category;
 import ru.practicum.event.location.LocationDto;
 import ru.practicum.event.model.Event;
@@ -8,9 +9,8 @@ import ru.practicum.user.UserShortDto;
 
 import java.time.LocalDateTime;
 
-public class EventMapper {
-
-    public EventMapper() {}
+@NoArgsConstructor
+public final class EventMapper {
 
     public static Event toEventFromEventNewDto(Long userId, Long locationId, EventNewDto eventNewDto) {
         return new Event(

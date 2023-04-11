@@ -1,7 +1,6 @@
 package ru.practicum.event.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-//import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.json.JSONException;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventNewDto;

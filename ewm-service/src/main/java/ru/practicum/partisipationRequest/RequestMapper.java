@@ -1,9 +1,9 @@
 package ru.practicum.partisipationRequest;
 
-public class RequestMapper {
+import lombok.NoArgsConstructor;
 
-    public RequestMapper() {
-    }
+@NoArgsConstructor
+public class RequestMapper {
 
     public static RequestDto toRequestDtoFromRequest(Request request) {
         return new RequestDto(
