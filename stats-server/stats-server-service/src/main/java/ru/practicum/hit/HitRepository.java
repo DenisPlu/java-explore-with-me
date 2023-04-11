@@ -11,6 +11,6 @@ public interface HitRepository extends JpaRepository<Hit, Long> {
     @Query("SELECT h FROM Hit h WHERE h.uri IN (?1) AND h.timestamp >= ?2 AND h.timestamp <= ?3")
     List<Hit> findHitsByUriAndTimeDiapason(List<String> uris, LocalDateTime start, LocalDateTime end);
 
-    @Query(value = "SELECT * FROM hits WHERE (created >= ? AND created <= ?)", nativeQuery = true)
+    @Query(value = "SELECT * FROM hits WHERE (created >= ?1 AND created <= ?2)", nativeQuery = true)
     List<Hit> findHitsByTimeDiapason(LocalDateTime start, LocalDateTime end);
 }

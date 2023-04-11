@@ -1,14 +1,15 @@
 package ru.practicum.hit;
 
 import ru.practicum.HitDto;
-import ru.practicum.HitStringDateDto;
+import ru.practicum.HitDtoMin;
 
 import java.time.LocalDateTime;
 
 public final class HitMapper {
-    private HitMapper(){};
+    private HitMapper() {
+    }
 
-    public static HitDto toHitDto(Hit hit, Long hitsNumber) {
+    public static HitDto toHitDto(Hit hit, Integer hitsNumber) {
 
         return new HitDto(
                 hit.getApp(),
@@ -17,13 +18,13 @@ public final class HitMapper {
         );
     }
 
-    public static Hit toHitFromHitStringDateDto(HitStringDateDto hitDto) {
+    public static Hit toHitFromHitDtoMin(HitDtoMin hitDtoMin, String ip) {
 
         return new Hit(
-                hitDto.getId(),
-                hitDto.getApp(),
-                hitDto.getUri(),
-                hitDto.getIp(),
+                hitDtoMin.getId(),
+                hitDtoMin.getApp(),
+                hitDtoMin.getUri(),
+                ip,
                 LocalDateTime.now()
         );
     }

@@ -1,17 +1,18 @@
-package ru.practicum;
+package ru.practicum.partisipationRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HitDto {
-    String app;
+public class RequestUpdateDto {
 
-    String uri;
+    List<Long> requestIds;
 
-    Integer hits;
+    RequestUpdateState status;
 }

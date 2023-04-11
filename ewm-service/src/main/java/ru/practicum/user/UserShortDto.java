@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.user;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,10 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HitDto {
-    String app;
+public class UserShortDto {
 
-    String uri;
+    Long id;
 
-    Integer hits;
+    String name;
 }
