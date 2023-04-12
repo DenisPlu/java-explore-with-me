@@ -19,7 +19,7 @@ public class CommentPublicController {
 
     private final CommentService commentService;
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public List<CommentFullDto> getByUserId(@PathVariable Long userId,
                                             @RequestParam(defaultValue = "10") @Positive Integer size,
                                             @RequestParam(defaultValue = "0") @Positive Integer from) throws JSONException, JsonProcessingException {
@@ -27,7 +27,7 @@ public class CommentPublicController {
         return commentService.getByUserId(userId, size, from);
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/event/{eventId}")
     public List<CommentFullDto> getByEventId(@PathVariable Long eventId,
                                      @RequestParam(defaultValue = "10") @Positive Integer size,
                                      @RequestParam(defaultValue = "0") @Positive Integer from) {

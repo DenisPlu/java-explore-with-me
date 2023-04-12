@@ -3,7 +3,6 @@ package ru.practicum.comment;
 import ru.practicum.comment.dto.CommentFullDto;
 import ru.practicum.comment.dto.CommentNewDto;
 import ru.practicum.comment.dto.CommentUpdateDto;
-import ru.practicum.comment.model.Comment;
 
 import java.util.List;
 

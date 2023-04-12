@@ -15,6 +15,7 @@ import ru.practicum.comment.model.CommentStateAction;
 import ru.practicum.event.service.EventRepository;
 import ru.practicum.user.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    CommentRepository commentRepository;
-    EventRepository eventRepository;
-    UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     @Override
     public CommentFullDto create(Long userId, CommentNewDto commentNewDto) {
-        boolean isNotExists = commentRepository.getByUserAndEventId(userId, commentNewDto.getEventId()).isEmpty();
+        boolean isNotExists = Optional.ofNullable(commentRepository.getByUserAndEventId(userId, commentNewDto.getEventId())).isEmpty();
         if (isNotExists) {
             Comment comment = commentRepository.save(new Comment(
                     commentNewDto.getId(),
@@ -54,6 +55,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentFullDto> getByUserId(Long userId, Integer size, Integer from) {
+        System.out.println("userId = " + userId + " size = " + size + " from = " + from);
+        System.out.println(eventRepository);
+        System.out.println(commentRepository);
         List<Comment> comments = commentRepository.getByUserId(userId, size, from);
         List<CommentFullDto> fullDtoComments = new ArrayList<>();
         for (Comment comment : comments) {
@@ -89,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
                 comment.setText(commentUpdateDto.getText());
             }
             return CommentMapper.toCommentFullDtoFromComment(
-                    comment,
+                    commentRepository.save(comment),
                     eventRepository.getReferenceById(comment.getEventId()).getTitle(),
                     userRepository.getReferenceById(userId).getName()
             );
@@ -105,15 +109,15 @@ public class CommentServiceImpl implements CommentService {
             comment.setText(commentUpdateDto.getText());
         }
         if (Optional.ofNullable(commentUpdateDto.getStateAction()).isPresent()) {
-            if (commentUpdateDto.getStateAction().equals(CommentStateAction.PUBLISHING)){
+            if (commentUpdateDto.getStateAction().equals(CommentStateAction.PUBLISHING)) {
                 comment.setStatus(CommentState.PUBLISHED);
             }
-            if (commentUpdateDto.getStateAction().equals(CommentStateAction.REJECTING)){
+            if (commentUpdateDto.getStateAction().equals(CommentStateAction.REJECTING)) {
                 comment.setStatus(CommentState.CANCELED);
             }
         }
         return CommentMapper.toCommentFullDtoFromComment(
-                comment,
+                commentRepository.save(comment),
                 eventRepository.getReferenceById(comment.getEventId()).getTitle(),
                 userRepository.getReferenceById(comment.getAuthorId()).getName()
         );
@@ -121,6 +125,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(Long commentId) {
-        commentRepository.deleteById(commentId);
+        try {
+            if (commentRepository.getReferenceById(commentId).getStatus().equals(CommentState.CANCELED)) {
+                commentRepository.deleteById(commentId);
+            } else {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Комментарий должен быть в состоянии отмененный");
+            }
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Комментария с данным id не существует");
+        }
     }
 }

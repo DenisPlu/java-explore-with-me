@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/comments/{userId}")
+@RequestMapping(path = "/users/{userId}/comments")
 public class CommentPrivateController {
 
     private final CommentService commentService;
