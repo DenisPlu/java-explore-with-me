@@ -4,7 +4,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.comment.model.Comment;
 
 @NoArgsConstructor
-public class CommentMapper {
+public final class CommentMapper {
 
     public static CommentFullDto toCommentFullDtoFromComment(
             Comment comment, String eventTitle, String authorName) {

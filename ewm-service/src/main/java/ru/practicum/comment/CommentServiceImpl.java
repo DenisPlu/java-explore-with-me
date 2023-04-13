@@ -34,15 +34,16 @@ public class CommentServiceImpl implements CommentService {
     public CommentFullDto create(Long userId, CommentNewDto commentNewDto) {
         boolean isNotExists = Optional.ofNullable(commentRepository.getByUserAndEventId(userId, commentNewDto.getEventId())).isEmpty();
         if (isNotExists) {
-            Comment comment = commentRepository.save(new Comment(
-                    commentNewDto.getId(),
-                    commentNewDto.getText(),
-                    LocalDateTime.now(),
-                    null,
-                    commentNewDto.getEventId(),
-                    userId,
-                    CommentState.WAITING
-            ));
+            Comment comment = commentRepository.save(Comment.builder()
+                    .id(commentNewDto.getId())
+                    .text(commentNewDto.getText())
+                    .created(LocalDateTime.now())
+                    .updated(null)
+                    .eventId(commentNewDto.getEventId())
+                    .authorId(userId)
+                    .status(CommentState.WAITING)
+                    .build()
+            );
             return CommentMapper.toCommentFullDtoFromComment(
                     comment,
                     eventRepository.getReferenceById(comment.getEventId()).getTitle(),
@@ -55,9 +56,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentFullDto> getByUserId(Long userId, Integer size, Integer from) {
-        System.out.println("userId = " + userId + " size = " + size + " from = " + from);
-        System.out.println(eventRepository);
-        System.out.println(commentRepository);
         List<Comment> comments = commentRepository.getByUserId(userId, size, from);
         List<CommentFullDto> fullDtoComments = new ArrayList<>();
         for (Comment comment : comments) {
